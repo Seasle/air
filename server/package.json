@@ -1,0 +1,20 @@
+{
+    "private": true,
+    "type": "module",
+    "main": "index.js",
+    "scripts": {
+        "start": "node"
+    },
+    "dependencies": {
+        "dotenv": "^8.2.0",
+        "oracledb": "^5.0.0"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.12.3",
+        "@babel/eslint-parser": "^7.12.1",
+        "@babel/plugin-syntax-top-level-await": "^7.12.1",
+        "@babel/preset-env": "^7.12.1",
+        "eslint": "^7.11.0",
+        "prettier": "^2.1.2"
+    }
+}

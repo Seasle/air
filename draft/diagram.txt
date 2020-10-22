@@ -1,0 +1,59 @@
+// https://dbdiagram.io/
+
+Table Country {
+  Id NUMBER [pk, increment]
+  Name VARCHAR2(100)
+}
+
+Table City {
+  Id NUMBER [pk, increment]
+  Country_Id NUMBER
+  Name VARCHAR2(100)
+}
+
+Ref: Country.Id < City.Country_Id
+
+Table Airplane {
+  Id NUMBER [pk, increment]
+  Name VARCHAR2(100)
+}
+
+Table Place_Type {
+  Id NUMBER [pk, increment]
+  Name VARCHAR2(100)
+}
+
+Table Places {
+  Airplane_Id NUMBER
+  Place_Type_Id NUMBER
+  Number VARCHAR2(50)
+}
+
+Ref: Airplane.Id < Places.Airplane_Id
+Ref: Place_Type.Id < Places.Place_Type_Id
+
+Table Flight {
+  Number VARCHAR2(50)
+  Airplane_Id NUMBER
+  Departure_Id NUMBER
+  Arrival_Id NUMBER
+  Date DATE
+  Time NUMBER
+  Ticket_Price NUMBER
+}
+
+Ref: Airplane.Id - Flight.Airplane_Id
+Ref: City.Id < Flight.Departure_Id
+Ref: City.Id < Flight.Arrival_Id
+
+Table Passengers {
+  Id NUMBER [pk, increment]
+  Surname VARCHAR2(100)
+  Name VARCHAR2(100)
+  Patronymic VARCHAR2(100)
+  Document_Number VARCHAR2(50)
+  Document_Series VARCHAR2(50)
+  Flight_Number VARCHAR2(50)
+}
+
+Ref: Flight.Number < Passengers.Flight_Number

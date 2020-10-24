@@ -23,14 +23,14 @@ Table Place_Type {
   Name VARCHAR2(100)
 }
 
-Table Places {
+Table Airplane_Places {
   Airplane_Id NUMBER
   Place_Type_Id NUMBER
   Number VARCHAR2(50)
 }
 
-Ref: Airplane.Id < Places.Airplane_Id
-Ref: Place_Type.Id < Places.Place_Type_Id
+Ref: Airplane.Id < Airplane_Places.Airplane_Id
+Ref: Place_Type.Id < Airplane_Places.Place_Type_Id
 
 Table Flight {
   Number VARCHAR2(50)

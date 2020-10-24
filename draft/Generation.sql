@@ -113,6 +113,8 @@ IS
     FROM Flight
     WHERE Flight_Number = V_Flight_Number;
 BEGIN
+    SAVEPOINT Save_Point;
+
     OPEN Cursor_1;
     FETCH Cursor_1 INTO Xml_Value;
 
@@ -140,4 +142,8 @@ BEGIN
         V_Flight_Time,
         V_Ticket_Price
     );
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK TO Save_Point;
+    RAISE;
 END;

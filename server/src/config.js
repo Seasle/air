@@ -1,7 +1,4 @@
 import oracledb from 'oracledb';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 export default {
     user: process.env.USER,

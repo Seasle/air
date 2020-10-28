@@ -2,12 +2,15 @@ import oracledb from 'oracledb';
 import config from './config.js';
 
 // from draft/mapper.js
-const mapper = data => Object.fromEntries(
-    (Array.isArray(data) ? data : Object.entries(data)).map(([key, value]) => [
-        key.toLowerCase().replace(/([-_][a-z])/g, group => group.toUpperCase().replace(/[-_]/g, '')),
-        value
-    ])
-);
+const mapper = data =>
+    Object.fromEntries(
+        (Array.isArray(data) ? data : Object.entries(data)).map(([key, value]) => [
+            key
+                .toLowerCase()
+                .replace(/([-_][a-z])/g, group => group.toUpperCase().replace(/[-_]/g, '')),
+            value,
+        ])
+    );
 
 const run = async () => {
     console.log(config);
@@ -24,7 +27,7 @@ const run = async () => {
         console.log(result.metaData);
         console.log(result.rows);
 
-        const combined = result.rows.map(entry => 
+        const combined = result.rows.map(entry =>
             mapper(entry.map((value, index) => [result.metaData[index].name, value]))
         );
         console.log(combined);
@@ -39,6 +42,6 @@ const run = async () => {
             }
         }
     }
-}
+};
 
 run();

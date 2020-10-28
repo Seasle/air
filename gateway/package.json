@@ -1,21 +1,23 @@
 {
-    "private": true,
+    "name": "gateway",
+    "private": "true",
     "type": "module",
     "main": "src/index.js",
     "scripts": {
         "start": "node ."
     },
     "dependencies": {
+        "chalk": "^4.1.0",
         "dotenv": "^8.2.0",
         "fastify": "^3.7.0",
-        "oracledb": "^5.0.0"
+        "fastify-http-proxy": "^4.0.4"
     },
     "devDependencies": {
         "@babel/core": "^7.12.3",
         "@babel/eslint-parser": "^7.12.1",
         "@babel/plugin-syntax-top-level-await": "^7.12.1",
         "@babel/preset-env": "^7.12.1",
-        "eslint": "^7.11.0",
+        "eslint": "^7.12.1",
         "prettier": "^2.1.2"
     }
 }

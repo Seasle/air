@@ -10,7 +10,7 @@ const defineProxy = (upstream, prefix = '/', rewritePrefix = prefix) => {
         prefix,
         rewritePrefix,
         preHandler: (request, reply, done) => {
-            log(from(request.url), '->', to(`${upstream}${request.url}`));
+            log(from(request.url), '->', to(`${upstream}${rewritePrefix}`));
 
             done();
         },

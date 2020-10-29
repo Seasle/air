@@ -1,7 +1,20 @@
-const initalState = {};
+import { SET_ALLOWED } from '../actionTypes';
+
+const initalState = {
+    allowed: [],
+};
 
 const metaDataReducer = (state = initalState, action) => {
-    return state;
+    switch (action.type) {
+        case SET_ALLOWED:
+            return {
+                ...state,
+                allowed: action.payload,
+            };
+        default: {
+            return state;
+        }
+    }
 };
 
 export default metaDataReducer;

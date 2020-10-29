@@ -11,6 +11,7 @@ import {
 } from '@material-ui/core';
 import { updateUser } from '../redux/actions/userActions';
 import { px } from '../utils';
+import { selectUser } from '../api';
 
 const USERS = [
     {
@@ -31,7 +32,9 @@ const Auth = props => {
     const classes = useStyles();
 
     const handleClick = user => {
-        props.updateUser(user);
+        selectUser(user).then(user => {
+            props.updateUser(user);
+        });
     };
 
     return (

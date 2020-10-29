@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { Avatar, Button, Menu, MenuItem, makeStyles, withStyles } from '@material-ui/core';
-import { updateUser } from '../redux/actions/userActions';
+import { resetStore } from '../redux/actions/commonActions';
+import { logoutUser } from '../api';
 import { px } from '../utils';
 
 const ThemedMenu = withStyles(theme => ({
@@ -26,7 +27,9 @@ const Profile = props => {
     const handleLogout = () => {
         handleMenuClose();
 
-        props.updateUser(null);
+        logoutUser(null).then(user => {
+            props.resetStore();
+        });
     };
 
     return (
@@ -71,7 +74,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    updateUser: data => dispatch(updateUser(data)),
+    resetStore: () => dispatch(resetStore()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);

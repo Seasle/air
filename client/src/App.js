@@ -1,12 +1,24 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import Loader from './components/Loader';
+import { getUser } from './api';
+import { updateUser } from './redux/actions/userActions';
 
 const Home = lazy(() => import('./routing/Home.js'));
 const Auth = lazy(() => import('./routing/Auth.js'));
 
 const App = props => {
+    useEffect(() => {
+        getUser().then(user => {
+            if (user.name !== props.userName || user.password !== props.password) {
+                props.updateUser(user);
+            }
+        });
+    }, []);
+
+    const userSelected = props.userName !== null && props.password !== null;
+
     return (
         <Router>
             <Suspense fallback={<Loader />}>
@@ -14,12 +26,12 @@ const App = props => {
                     <Route
                         exact
                         path="/"
-                        render={() => (props.userSelected ? <Home /> : <Redirect to="/auth" />)}
+                        render={() => (userSelected ? <Home /> : <Redirect to="/auth" />)}
                     />
                     <Route
                         exact
                         path="/auth"
-                        render={() => (!props.userSelected ? <Auth /> : <Redirect to="/" />)}
+                        render={() => (!userSelected ? <Auth /> : <Redirect to="/" />)}
                     />
                 </Switch>
             </Suspense>
@@ -28,7 +40,12 @@ const App = props => {
 };
 
 const mapStateToProps = state => ({
-    userSelected: state.user.name !== null && state.user.password !== null,
+    userName: state.user.userName,
+    password: state.user.password,
 });
 
-export default connect(mapStateToProps)(App);
+const mapDispatchToProps = dispatch => ({
+    updateUser: data => dispatch(updateUser(data)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

@@ -1,10 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
 import { Typography, makeStyles } from '@material-ui/core';
 import Header from '../components/Header';
+import { getAllowed } from '../api';
 import { px } from '../utils';
+import { setAllowed } from '../redux/actions/metaDataActions';
 
 const Home = props => {
     const classes = useStyles();
+
+    useEffect(() => {
+        getAllowed().then(allowed => {
+            props.setAllowed(allowed);
+        });
+    }, []);
 
     return (
         <div className={classes.root}>
@@ -29,4 +38,8 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-export default Home;
+const mapDispatchToProps = dispatch => ({
+    setAllowed: data => dispatch(setAllowed(data)),
+});
+
+export default connect(null, mapDispatchToProps)(Home);

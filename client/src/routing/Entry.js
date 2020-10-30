@@ -4,13 +4,16 @@ import { Redirect, useRouteMatch } from 'react-router-dom';
 import {
     Paper,
     TableContainer,
+    TablePagination,
     Table,
     TableHead,
     TableBody,
     TableRow,
     TableCell,
+    TableSortLabel,
     Typography,
     makeStyles,
+    withStyles,
 } from '@material-ui/core';
 import { Alert, AlertTitle } from '@material-ui/lab';
 import { ArrowBack } from '@material-ui/icons';
@@ -20,6 +23,20 @@ import { getData } from '../api';
 import { CancelToken } from 'axios';
 import { parse, px } from '../utils';
 
+const ThemedTableCell = withStyles(theme => ({
+    head: {
+        fontWeight: 600,
+    },
+}))(TableCell);
+
+const ThemedTableRow = withStyles(theme => ({
+    root: {
+        '&:last-child > *': {
+            borderBottom: 'unset',
+        },
+    },
+}))(TableRow);
+
 const Entry = props => {
     const classes = useStyles();
     const { params } = useRouteMatch();
@@ -27,24 +44,56 @@ const Entry = props => {
 
     const [data, setData] = useState([]);
     const [columns, setColumns] = useState([]);
+    const [total, setTotal] = useState(0);
+    const [order, setOrder] = useState(null);
+    const [direction, setDirection] = useState('DESC');
+    const [size, setSize] = useState(10);
+    const [page, setPage] = useState(0);
     const [isEmpty, setIsEmpty] = useState(false);
+
+    const handleChangePage = (event, page) => setPage(page);
+
+    const handleChangeSize = event => {
+        const value = Number(event.target.value);
+
+        setSize(value);
+        setPage(state => Math.max(0, Math.min(state, Math.ceil(total / value) - 1)));
+    };
+
+    const changeSorting = key => {
+        if (order === key) {
+            setDirection(state => (state === 'ASC' ? 'DESC' : 'ASC'));
+        }
+
+        setOrder(key);
+    };
 
     useEffect(() => {
         const { token, cancel } = CancelToken.source();
 
-        getData(params.name, {
-            cancelToken: token,
-        }).then(({ data, columns }) => {
+        getData(
+            {
+                name: params.name,
+                order,
+                direction,
+                page,
+                size,
+            },
+            {
+                cancelToken: token,
+            }
+        ).then(({ total, data, columns }) => {
             if (data.length === 0 || columns.length === 0) {
                 setIsEmpty(true);
             } else {
+                setTotal(total);
                 setData(data);
                 setColumns(columns);
             }
         });
 
         return () => cancel();
-    }, [params.name]);
+    }, [params.name, order, direction, page, size]);
 
     return !accessGranted ? (
         <Redirect to="/" />
@@ -70,28 +119,49 @@ const Entry = props => {
                     </Alert>
                 )}
                 {!isEmpty && (
-                    <TableContainer>
-                        <Table className={classes.table}>
-                            <TableHead>
-                                <TableRow>
-                                    {columns.map((column, index) => (
-                                        <TableCell key={index}>{column.name}</TableCell>
-                                    ))}
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {data.map((entry, index) => (
-                                    <TableRow key={index}>
+                    <>
+                        <TableContainer
+                            component={props => <Paper variant="outlined" {...props} />}
+                        >
+                            <Table className={classes.table}>
+                                <TableHead>
+                                    <TableRow>
                                         {columns.map((column, index) => (
-                                            <TableCell key={index}>
-                                                {parse(entry[column.key])}
-                                            </TableCell>
+                                            <ThemedTableCell key={index}>
+                                                <TableSortLabel
+                                                    active={order === column.key}
+                                                    direction={direction.toLowerCase()}
+                                                    onClick={() => changeSorting(column.key)}
+                                                >
+                                                    {column.name}
+                                                </TableSortLabel>
+                                            </ThemedTableCell>
                                         ))}
                                     </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                                </TableHead>
+                                <TableBody>
+                                    {data.map((entry, index) => (
+                                        <ThemedTableRow key={index}>
+                                            {columns.map((column, index) => (
+                                                <ThemedTableCell key={index}>
+                                                    {parse(entry[column.key])}
+                                                </ThemedTableCell>
+                                            ))}
+                                        </ThemedTableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                        <TablePagination
+                            rowsPerPageOptions={[10, 25, 100]}
+                            component="div"
+                            count={total}
+                            page={page}
+                            rowsPerPage={size}
+                            onChangePage={handleChangePage}
+                            onChangeRowsPerPage={handleChangeSize}
+                        />
+                    </>
                 )}
             </Paper>
         </div>

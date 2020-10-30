@@ -1,5 +1,5 @@
-import { get } from './core';
+import { post } from './core';
 
 const base = 'data';
 
-export const getData = (name, options) => get(`${base}/${name}`, options);
+export const getData = (params, options) => post(base, params, options);

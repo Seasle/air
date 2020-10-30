@@ -50,6 +50,7 @@ const useStyles = makeStyles(theme => ({
     },
     container: {
         padding: px(32),
+        flexGrow: 1,
     },
 }));
 

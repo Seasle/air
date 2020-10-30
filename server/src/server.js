@@ -5,6 +5,7 @@ import caching from 'fastify-caching';
 import session from 'fastify-server-session';
 import user from './routes/user.js';
 import meta from './routes/meta.js';
+import data from './routes/data.js';
 
 const server = fastify();
 
@@ -19,6 +20,7 @@ server.register(
     (fastify, options, done) => {
         fastify.register(user, { prefix: 'user' });
         fastify.register(meta, { prefix: 'meta' });
+        fastify.register(data, { prefix: 'data' });
 
         done();
     },

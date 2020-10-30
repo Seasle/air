@@ -25,13 +25,13 @@ const App = props => {
                 <Switch>
                     <Route
                         exact
-                        path="/"
-                        render={() => (userSelected ? <Home /> : <Redirect to="/auth" />)}
+                        path="/auth"
+                        render={() => (!userSelected ? <Auth /> : <Redirect to="/" />)}
                     />
                     <Route
                         exact
-                        path="/auth"
-                        render={() => (!userSelected ? <Auth /> : <Redirect to="/" />)}
+                        path={['/', '/:module', '/:module/:name']}
+                        render={() => (userSelected ? <Home /> : <Redirect to="/auth" />)}
                     />
                 </Switch>
             </Suspense>

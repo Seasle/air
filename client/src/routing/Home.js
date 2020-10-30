@@ -1,10 +1,14 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import { Switch, Route } from 'react-router-dom';
 import { Typography, makeStyles } from '@material-ui/core';
 import Header from '../components/Header';
+import Menu from '../components/Menu';
+import Views from './Views';
+import Entry from './Entry';
 import { getAllowed } from '../api';
-import { px } from '../utils';
 import { setAllowed } from '../redux/actions/metaDataActions';
+import { px } from '../utils';
 
 const Home = props => {
     const classes = useStyles();
@@ -17,11 +21,22 @@ const Home = props => {
 
     return (
         <div className={classes.root}>
-            <Header />
+            <Menu>{openMenu => <Header openMenu={openMenu} />}</Menu>
             <div className={classes.container}>
-                <Typography variant="h3" align="center">
-                    Hello World
-                </Typography>
+                <Switch>
+                    <Route exact path="/">
+                        <Typography variant="h3" align="center">
+                            Hello World
+                        </Typography>
+                    </Route>
+                    <Route path="/views" component={Views} />
+                    <Route path="/tables">
+                        <Typography variant="h3" align="center">
+                            Tables here
+                        </Typography>
+                    </Route>
+                    <Route path="/entry/:name" component={Entry} />
+                </Switch>
             </div>
         </div>
     );

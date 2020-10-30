@@ -7,22 +7,25 @@ const Header = props => {
     const classes = useStyles();
 
     return (
-        <AppBar position="static">
-            <Toolbar>
-                <IconButton
-                    className={classes.menuButton}
-                    edge="start"
-                    color="inherit"
-                    onClick={props.openMenu}
-                >
-                    <Menu />
-                </IconButton>
-                <Typography className={classes.title} variant="h6">
-                    Air
-                </Typography>
-                <Profile />
-            </Toolbar>
-        </AppBar>
+        <>
+            <AppBar position="fixed">
+                <Toolbar>
+                    <IconButton
+                        className={classes.menuButton}
+                        edge="start"
+                        color="inherit"
+                        onClick={props.openMenu}
+                    >
+                        <Menu />
+                    </IconButton>
+                    <Typography className={classes.title} variant="h6">
+                        Air
+                    </Typography>
+                    <Profile />
+                </Toolbar>
+            </AppBar>
+            <Toolbar />
+        </>
     );
 };
 

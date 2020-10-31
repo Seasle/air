@@ -71,29 +71,24 @@ const AsyncField = ({ settings, label, name, variant, onChange, ...props }) => {
             options={options}
             loading={loading}
             onChange={handleChange}
-            renderInput={params => {
-                console.log(params);
-                return (
-                    <TextField
-                        {...params}
-                        label={label}
-                        variant={variant}
-                        onChange={handleUpdate}
-                        InputProps={{
-                            ...params.InputProps,
-                            endAdornment: (
-                                <React.Fragment>
-                                    {loading ? (
-                                        <CircularProgress color="inherit" size={20} />
-                                    ) : null}
-                                    {params.InputProps.endAdornment}
-                                </React.Fragment>
-                            ),
-                        }}
-                        {...props}
-                    />
-                );
-            }}
+            renderInput={params => (
+                <TextField
+                    {...params}
+                    label={label}
+                    variant={variant}
+                    onChange={handleUpdate}
+                    InputProps={{
+                        ...params.InputProps,
+                        endAdornment: (
+                            <React.Fragment>
+                                {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                                {params.InputProps.endAdornment}
+                            </React.Fragment>
+                        ),
+                    }}
+                    {...props}
+                />
+            )}
         />
     );
 };

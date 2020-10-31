@@ -1,9 +1,16 @@
 export default {
+    name: 'Борт',
     city: 'Город',
     country: 'Страна',
     flightNumber: 'Рейс',
     departureDate: 'Дата вылета',
     departureTime: 'Время вылета',
+    flightTime: 'Время полета',
+    ticketPrice: 'Цена билета',
+    departureCountry: 'Страна вылета',
+    departureCity: 'Город вылета',
+    arrivalCountry: 'Страна прилета',
+    arrivalCity: 'Город прилета',
     totalPlaces: 'Всего мест',
     freePlaces: 'Свободных мест',
 };

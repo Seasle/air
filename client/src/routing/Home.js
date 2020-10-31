@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Switch, Route } from 'react-router-dom';
+import clsx from 'clsx';
 import { Typography, makeStyles } from '@material-ui/core';
 import Header from '../components/Header';
 import Menu from '../components/Menu';
+import Tables from './Tables';
 import Views from './Views';
 import Entry from './Entry';
 import { getAllowed } from '../api';
@@ -20,8 +22,10 @@ const Home = props => {
     }, []);
 
     return (
-        <div className={classes.root}>
-            <Menu>{openMenu => <Header openMenu={openMenu} />}</Menu>
+        <div className={clsx(classes.root, props.isToolbarPinned && classes.offset)}>
+            <Menu>
+                {openMenu => <Header isToolbarPinned={props.isToolbarPinned} openMenu={openMenu} />}
+            </Menu>
             <div className={classes.container}>
                 <Switch>
                     <Route exact path="/">
@@ -29,12 +33,8 @@ const Home = props => {
                             Hello World
                         </Typography>
                     </Route>
+                    <Route path="/tables" component={Tables} />
                     <Route path="/views" component={Views} />
-                    <Route path="/tables">
-                        <Typography variant="h3" align="center">
-                            Tables here
-                        </Typography>
-                    </Route>
                     <Route path="/entry/:name" component={Entry} />
                 </Switch>
             </div>
@@ -48,14 +48,21 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         flexDirection: 'column',
     },
+    offset: {
+        marginLeft: 240,
+    },
     container: {
         padding: px(32),
         flexGrow: 1,
     },
 }));
 
+const mapStateToProps = state => ({
+    isToolbarPinned: state.common.menuType === 'permanent',
+});
+
 const mapDispatchToProps = dispatch => ({
     setAllowed: data => dispatch(setAllowed(data)),
 });
 
-export default connect(null, mapDispatchToProps)(Home);
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

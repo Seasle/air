@@ -21,9 +21,12 @@ import RouteButton from '../components/RouteButton';
 import { VIEWS } from '../constants';
 import { getData } from '../api';
 import { CancelToken } from 'axios';
-import { parse, px } from '../utils';
+import { camelToSnake, parse, px } from '../utils';
 
 const ThemedTableCell = withStyles(theme => ({
+    root: {
+        whiteSpace: 'nowrap',
+    },
     head: {
         fontWeight: 600,
     },
@@ -74,7 +77,7 @@ const Entry = props => {
         getData(
             {
                 name: params.name,
-                order,
+                order: camelToSnake(order),
                 direction,
                 page,
                 size,

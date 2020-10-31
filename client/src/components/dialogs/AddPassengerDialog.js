@@ -4,8 +4,17 @@ import { DialogTitle, DialogContent, DialogActions, Button, makeStyles } from '@
 import { Formik } from 'formik';
 import ThemedDialog from '../common/ThemedDialog';
 import Field from '../common/Field';
-import { PASSENGERS, FIELDS } from '../../constants';
+import { PASSENGERS, FLIGHT_NUMBER, FIELDS } from '../../constants';
+import { getAvailableFlights } from '../../api/dictionary';
 import { snakeToCamel, px } from '../../utils';
+
+const settings = {
+    [FLIGHT_NUMBER]: {
+        async: true,
+        endpoint: start =>
+            getAvailableFlights(Boolean(start) ? new URLSearchParams({ start }) : undefined),
+    },
+};
 
 const AddPassengerDialog = ({ children, columns, ...props }) => {
     const classes = useStyles();
@@ -20,6 +29,7 @@ const AddPassengerDialog = ({ children, columns, ...props }) => {
                 column: entry.columnName,
                 type: entry.dataType,
                 required: entry.required,
+                settings: settings[entry.columnName] || null,
             };
         }
 
@@ -56,6 +66,7 @@ const AddPassengerDialog = ({ children, columns, ...props }) => {
                             <DialogContent className={classes.form}>
                                 {Object.keys(fields).map((key, index) => (
                                     <Field
+                                        settings={fields[key].settings}
                                         label={FIELDS.get(fields[key].column) || fields[key].column}
                                         type={fields[key].type}
                                         name={key}

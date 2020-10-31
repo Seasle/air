@@ -1,8 +1,23 @@
 import React from 'react';
 import { TextField } from '@material-ui/core';
 import DateField from './DateField';
+import AsyncField from './AsyncField';
 
-const Field = ({ type, label, name, value, onChange, setFieldValue, ...props }) => {
+const Field = ({ type, settings, label, name, value, onChange, setFieldValue, ...props }) => {
+    if (settings?.async) {
+        return (
+            <AsyncField
+                settings={settings}
+                variant="outlined"
+                label={label}
+                name={name}
+                value={value}
+                onChange={setFieldValue}
+                {...props}
+            />
+        );
+    }
+
     switch (type) {
         case 'DATE':
             return (
@@ -12,6 +27,7 @@ const Field = ({ type, label, name, value, onChange, setFieldValue, ...props }) 
                     name={name}
                     value={value}
                     onChange={setFieldValue}
+                    {...props}
                 />
             );
         default:

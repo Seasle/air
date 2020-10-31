@@ -27,9 +27,9 @@ export const disconnect = async () => {
     }
 };
 
-export const select = async expression => {
+export const select = async (...args) => {
     try {
-        const result = await connection.execute(expression);
+        const result = await connection.execute(...args);
         const combined = result.rows.map(entry =>
             mapper(entry.map((value, index) => [result.metaData[index].name, value]))
         );

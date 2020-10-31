@@ -3,9 +3,11 @@ import cors from 'fastify-cors';
 import cookie from 'fastify-cookie';
 import caching from 'fastify-caching';
 import session from 'fastify-server-session';
+
 import user from './routes/user.js';
 import meta from './routes/meta.js';
 import data from './routes/data.js';
+import dictionary from './routes/dictionary.js';
 
 const server = fastify();
 
@@ -21,6 +23,7 @@ server.register(
         fastify.register(user, { prefix: 'user' });
         fastify.register(meta, { prefix: 'meta' });
         fastify.register(data, { prefix: 'data' });
+        fastify.register(dictionary, { prefix: 'dictionary' });
 
         done();
     },

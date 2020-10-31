@@ -13,6 +13,15 @@ export const snakeToCamel = value =>
         .toLowerCase()
         .replace(/([-_][a-z])/g, group => group.toUpperCase().replace(/[-_]/g, ''));
 
+export const debounce = (handle, duration = 0) => {
+    let timeout = null;
+
+    return function (...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => handle.apply(this, args), duration);
+    };
+};
+
 export const mergeMaps = (...entries) => new Map(entries.map(map => [...map.entries()]).flat());
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z?$/g;

@@ -1,16 +1,19 @@
 import { select } from '../db.js';
-import { groupBy } from '../utils/collections.js';
+import { groupBy, mergeBy } from '../utils/collections.js';
 
 export default (fastify, options, done) => {
     fastify.get('/allowed', async (request, reply) => {
         const data = await select('SELECT * FROM SYS.ALLOWED');
-        const normalized = data.map(entry => ({
-            tableName: entry.tableName,
-            select: entry.selectPriv,
-            insert: entry.insertPriv,
-            update: entry.updatePriv,
-            delete: entry.deletePriv,
-        }));
+        const normalized = mergeBy(
+            data.map(entry => ({
+                tableName: entry.tableName,
+                select: entry.selectPriv,
+                insert: entry.insertPriv,
+                update: entry.updatePriv,
+                delete: entry.deletePriv,
+            })),
+            entry => entry.tableName
+        );
 
         reply.send(normalized);
     });

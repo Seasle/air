@@ -2,8 +2,9 @@ import React, { Suspense, lazy, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import Loader from './components/Loader';
-import { getUser } from './api';
 import { updateUser } from './redux/actions/userActions';
+import { resetStore } from './redux/actions/commonActions';
+import { getUser } from './api';
 
 const Home = lazy(() => import('./routing/Home.js'));
 const Auth = lazy(() => import('./routing/Auth.js'));
@@ -13,6 +14,10 @@ const App = props => {
         getUser().then(user => {
             if (user.name !== props.userName || user.password !== props.password) {
                 props.updateUser(user);
+
+                if (user.name === null && user.password === null) {
+                    props.resetStore();
+                }
             }
         });
     }, []);
@@ -46,6 +51,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     updateUser: data => dispatch(updateUser(data)),
+    resetStore: () => dispatch(resetStore()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

@@ -2,6 +2,7 @@ export const normalize = value => {
     switch (value) {
         case 'Y':
         case 'YES':
+        case 'A':
             return true;
         case 'N':
         case 'NO':

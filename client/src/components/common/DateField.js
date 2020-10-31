@@ -3,8 +3,15 @@ import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import { ru } from 'date-fns/locale';
 
-const DateField = ({ variant, label, name, value, onChange }) => {
+const DateField = ({ variant, label, name, value, onChange, ...props }) => {
     const [open, setOpen] = useState(false);
+    const normalizedProps = Object.keys(props).reduce((accumulator, key) => {
+        if (Boolean(props[key])) {
+            accumulator[key] = props[key];
+        }
+
+        return accumulator;
+    }, {});
 
     return (
         <MuiPickersUtilsProvider utils={DateFnsUtils} locale={ru}>
@@ -23,6 +30,7 @@ const DateField = ({ variant, label, name, value, onChange }) => {
                 onOpen={() => setOpen(true)}
                 onClose={() => setOpen(false)}
                 onAccept={() => setOpen(false)}
+                {...normalizedProps}
             />
         </MuiPickersUtilsProvider>
     );

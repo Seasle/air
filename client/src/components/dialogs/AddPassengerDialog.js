@@ -51,7 +51,7 @@ const AddPassengerDialog = ({ children, columns, ...props }) => {
             <ThemedDialog open={open} onClose={closeDialog}>
                 <DialogTitle>Регистрация пассажира</DialogTitle>
                 <Formik initialValues={initialValues} validate={validate}>
-                    {({ values, errors, handleChange, setFieldValue, handleSubmit }) => (
+                    {({ values, touched, errors, handleChange, setFieldValue, handleSubmit }) => (
                         <>
                             <DialogContent className={classes.form}>
                                 {Object.keys(fields).map((key, index) => (
@@ -60,9 +60,9 @@ const AddPassengerDialog = ({ children, columns, ...props }) => {
                                         type={fields[key].type}
                                         name={key}
                                         value={values[key]}
-                                        helperText={errors[key]}
+                                        helperText={touched[key] && errors[key]}
                                         required={fields[key].required}
-                                        error={Boolean(errors[key])}
+                                        error={Boolean(touched[key] && errors[key])}
                                         onChange={handleChange}
                                         setFieldValue={setFieldValue}
                                         key={index}

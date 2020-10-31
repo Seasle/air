@@ -8,6 +8,8 @@ export const noop = () => {};
 
 export const camelToSnake = value => (value || '').replace(/[A-Z]/g, '_$&').toUpperCase();
 
+export const mergeMaps = (...entries) => new Map(entries.map(map => [...map.entries()]).flat());
+
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z?$/g;
 
 export const parse = value => {

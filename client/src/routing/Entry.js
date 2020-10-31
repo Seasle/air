@@ -18,10 +18,11 @@ import {
 import { Alert, AlertTitle } from '@material-ui/lab';
 import { ArrowBack } from '@material-ui/icons';
 import RouteButton from '../components/RouteButton';
-import { VIEWS } from '../constants';
+import EntryActions from '../components/EntryActions';
+import { TABLES, VIEWS } from '../constants';
 import { getData } from '../api';
 import { CancelToken } from 'axios';
-import { camelToSnake, parse, px } from '../utils';
+import { mergeMaps, camelToSnake, parse, px } from '../utils';
 
 const ThemedTableCell = withStyles(theme => ({
     root: {
@@ -39,6 +40,8 @@ const ThemedTableRow = withStyles(theme => ({
         },
     },
 }))(TableRow);
+
+const ENTRIES = mergeMaps(TABLES, VIEWS);
 
 const Entry = props => {
     const classes = useStyles();
@@ -102,18 +105,21 @@ const Entry = props => {
         <Redirect to="/" />
     ) : (
         <div className={classes.root}>
-            <RouteButton
-                back
-                className={classes.backButton}
-                color="primary"
-                variant="contained"
-                startIcon={<ArrowBack />}
-            >
-                Назад
-            </RouteButton>
+            <div className={classes.buttons}>
+                <RouteButton
+                    back
+                    className={classes.backButton}
+                    color="primary"
+                    variant="contained"
+                    startIcon={<ArrowBack />}
+                >
+                    Назад
+                </RouteButton>
+                <EntryActions />
+            </div>
             <Paper className={classes.paper}>
                 <Typography variant="h5" component="h2">
-                    {VIEWS.get(params.name)}
+                    {ENTRIES.get(params.name)}
                 </Typography>
                 {isEmpty && (
                     <Alert severity="info">
@@ -176,6 +182,12 @@ const useStyles = makeStyles(theme => ({
         gap: px(16),
         display: 'grid',
         gridTemplateRows: 'max-content 1fr',
+    },
+    buttons: {
+        gap: px(16),
+        display: 'grid',
+        gridAutoFlow: 'column',
+        gridAutoColumns: 'max-content',
     },
     paper: {
         padding: px(16),

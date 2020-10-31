@@ -1,7 +1,8 @@
-import { SET_ALLOWED } from '../actionTypes';
+import { SET_ALLOWED, SET_COLUMNS } from '../actionTypes';
 
 const initalState = {
     allowed: [],
+    columns: {},
 };
 
 const metaDataReducer = (state = initalState, action) => {
@@ -11,6 +12,12 @@ const metaDataReducer = (state = initalState, action) => {
                 ...state,
                 allowed: action.payload,
             };
+        case SET_COLUMNS: {
+            return {
+                ...state,
+                columns: action.payload,
+            };
+        }
         default: {
             return state;
         }

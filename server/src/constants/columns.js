@@ -1,5 +1,5 @@
 export default {
-    name: 'Борт',
+    name: 'Название',
     city: 'Город',
     country: 'Страна',
     flightNumber: 'Рейс',

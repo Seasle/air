@@ -8,16 +8,17 @@ import Menu from '../components/Menu';
 import Tables from './Tables';
 import Views from './Views';
 import Entry from './Entry';
-import { getAllowed } from '../api';
-import { setAllowed } from '../redux/actions/metaDataActions';
+import { getAllowed, getColumns } from '../api';
+import { setAllowed, setColumns } from '../redux/actions/metaDataActions';
 import { px } from '../utils';
 
 const Home = props => {
     const classes = useStyles();
 
     useEffect(() => {
-        getAllowed().then(allowed => {
+        Promise.all([getAllowed(), getColumns()]).then(([allowed, columns]) => {
             props.setAllowed(allowed);
+            props.setColumns(columns);
         });
     }, []);
 
@@ -63,6 +64,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     setAllowed: data => dispatch(setAllowed(data)),
+    setColumns: data => dispatch(setColumns(data)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

@@ -19,10 +19,10 @@ import { Alert, AlertTitle } from '@material-ui/lab';
 import { ArrowBack } from '@material-ui/icons';
 import RouteButton from '../components/RouteButton';
 import EntryActions from '../components/EntryActions';
-import { TABLES, VIEWS } from '../constants';
+import { ENTRIES } from '../constants';
 import { getData } from '../api';
 import { CancelToken } from 'axios';
-import { mergeMaps, camelToSnake, parse, px } from '../utils';
+import { camelToSnake, parse, px } from '../utils';
 
 const ThemedTableCell = withStyles(theme => ({
     root: {
@@ -40,8 +40,6 @@ const ThemedTableRow = withStyles(theme => ({
         },
     },
 }))(TableRow);
-
-const ENTRIES = mergeMaps(TABLES, VIEWS);
 
 const Entry = props => {
     const classes = useStyles();
@@ -115,7 +113,7 @@ const Entry = props => {
                 >
                     Назад
                 </RouteButton>
-                <EntryActions />
+                <EntryActions current={params.name} />
             </div>
             <Paper className={classes.paper}>
                 <Typography variant="h5" component="h2">
@@ -153,7 +151,7 @@ const Entry = props => {
                                         <ThemedTableRow key={index}>
                                             {columns.map((column, index) => (
                                                 <ThemedTableCell key={index}>
-                                                    {parse(entry[column.key])}
+                                                    {parse(entry[column.key], column.key)}
                                                 </ThemedTableCell>
                                             ))}
                                         </ThemedTableRow>

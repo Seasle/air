@@ -10,8 +10,9 @@ import {
     makeStyles,
 } from '@material-ui/core';
 import { updateUser } from '../redux/actions/userActions';
+import { setAllowed, setColumns } from '../redux/actions/metaDataActions';
 import { px } from '../utils';
-import { selectUser } from '../api';
+import { selectUser, getAllowed, getColumns } from '../api';
 
 const USERS = [
     {
@@ -34,6 +35,13 @@ const Auth = props => {
     const handleClick = user => {
         selectUser(user).then(user => {
             props.updateUser(user);
+
+            if (user.name !== null && user.password !== null) {
+                Promise.all([getAllowed(), getColumns()]).then(([allowed, columns]) => {
+                    props.setAllowed(allowed);
+                    props.setColumns(columns);
+                });
+            }
         });
     };
 
@@ -95,6 +103,8 @@ const useStyles = makeStyles(theme => ({
 
 const mapDispatchToProps = dispatch => ({
     updateUser: data => dispatch(updateUser(data)),
+    setAllowed: data => dispatch(setAllowed(data)),
+    setColumns: data => dispatch(setColumns(data)),
 });
 
 export default connect(null, mapDispatchToProps)(Auth);

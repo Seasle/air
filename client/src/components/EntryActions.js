@@ -1,6 +1,8 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { Button, withStyles } from '@material-ui/core';
 import AddPassengerDialog from './dialogs/AddPassengerDialog';
+import { PASSENGERS } from '../constants';
 
 const ThemedButton = withStyles(theme => ({
     label: {
@@ -8,18 +10,24 @@ const ThemedButton = withStyles(theme => ({
     },
 }))(Button);
 
-const EntryActions = props => {
+const EntryActions = ({ permissions, ...props }) => {
     return (
         <>
-            <AddPassengerDialog>
-                {openDialog => (
-                    <ThemedButton color="primary" variant="contained" onClick={openDialog}>
-                        Добавить
-                    </ThemedButton>
-                )}
-            </AddPassengerDialog>
+            {props.current === PASSENGERS && permissions.insert && (
+                <AddPassengerDialog>
+                    {openDialog => (
+                        <ThemedButton color="primary" variant="contained" onClick={openDialog}>
+                            Добавить
+                        </ThemedButton>
+                    )}
+                </AddPassengerDialog>
+            )}
         </>
     );
 };
 
-export default EntryActions;
+const mapStateToProps = (state, props) => ({
+    permissions: state.metaData.allowed.find(entry => entry.tableName === props.current) || {},
+});
+
+export default connect(mapStateToProps)(EntryActions);

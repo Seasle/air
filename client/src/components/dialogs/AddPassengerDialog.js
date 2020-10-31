@@ -1,28 +1,101 @@
-import React, { Children, useState } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { Dialog, DialogTitle, DialogContent, DialogActions, makeStyles } from '@material-ui/core';
+import { DialogTitle, DialogContent, DialogActions, Button, makeStyles } from '@material-ui/core';
+import { Formik } from 'formik';
+import ThemedDialog from '../common/ThemedDialog';
+import Field from '../common/Field';
+import { PASSENGERS, FIELDS } from '../../constants';
+import { snakeToCamel, px } from '../../utils';
 
-const AddPassengerDialog = ({ children, ...props }) => {
+const AddPassengerDialog = ({ children, columns, ...props }) => {
     const classes = useStyles();
     const [open, setOpen] = useState(false);
 
     const openDialog = () => setOpen(true);
     const closeDialog = () => setOpen(false);
 
+    const fields = columns.reduce((accumulator, entry) => {
+        if (!entry.isIdentity) {
+            accumulator[snakeToCamel(entry.columnName)] = {
+                column: entry.columnName,
+                type: entry.dataType,
+                required: entry.required,
+            };
+        }
+
+        return accumulator;
+    }, {});
+
+    const initialValues = Object.keys(fields).reduce((accumulator, field) => {
+        accumulator[field] = '';
+
+        return accumulator;
+    }, {});
+
+    const validate = values => {
+        const errors = {};
+        const keys = Object.keys(values);
+
+        for (const key of keys) {
+            if (fields[key].required && (values[key] === null || values[key] === '')) {
+                errors[key] = 'Поле является обязательным';
+            }
+        }
+
+        return errors;
+    };
+
     return (
         <>
             {children(openDialog)}
-            <Dialog open={open} onClose={closeDialog}>
-                <DialogTitle>Заголовок</DialogTitle>
-                <DialogContent>Содержание</DialogContent>
-                <DialogActions>Кнопки</DialogActions>
-            </Dialog>
+            <ThemedDialog open={open} onClose={closeDialog}>
+                <DialogTitle>Регистрация пассажира</DialogTitle>
+                <Formik initialValues={initialValues} validate={validate}>
+                    {({ values, errors, handleChange, setFieldValue, handleSubmit }) => (
+                        <>
+                            <DialogContent className={classes.form}>
+                                {Object.keys(fields).map((key, index) => (
+                                    <Field
+                                        label={FIELDS.get(fields[key].column) || fields[key].column}
+                                        type={fields[key].type}
+                                        name={key}
+                                        value={values[key]}
+                                        helperText={errors[key]}
+                                        required={fields[key].required}
+                                        error={Boolean(errors[key])}
+                                        onChange={handleChange}
+                                        setFieldValue={setFieldValue}
+                                        key={index}
+                                    />
+                                ))}
+                                <pre>{JSON.stringify(values, null, 2)}</pre>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button color="primary" onClick={closeDialog}>
+                                    Отменить
+                                </Button>
+                                <Button color="primary" variant="contained" onClick={handleSubmit}>
+                                    Зарегистрировать
+                                </Button>
+                            </DialogActions>
+                        </>
+                    )}
+                </Formik>
+            </ThemedDialog>
         </>
     );
 };
 
-const useStyles = makeStyles(theme => ({}));
+const useStyles = makeStyles(theme => ({
+    form: {
+        gap: px(16),
+        display: 'grid',
+        gridAutoRows: 'max-content',
+    },
+}));
 
-const mapStateToProps = state => ({});
+const mapStateToProps = state => ({
+    columns: state.metaData.columns[PASSENGERS],
+});
 
 export default connect(mapStateToProps)(AddPassengerDialog);

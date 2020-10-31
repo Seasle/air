@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import EntryCard from '../components/EntryCard';
-import { PLACE, PLACES, FLIGHT_SCHEDULE, PASSENGERS, VIEWS } from '../constants';
+import { PLACE, PLACES, FLIGHT_SCHEDULE, VIEWS } from '../constants';
 import { px } from '../utils';
 
 const Views = props => {
@@ -29,13 +29,6 @@ const Views = props => {
                     title={props.entries.get(FLIGHT_SCHEDULE)}
                     image="/static/schedule-board.jpg"
                     to={`entry/${FLIGHT_SCHEDULE}`}
-                />
-            )}
-            {props.entries.has(PASSENGERS) && (
-                <EntryCard
-                    title={props.entries.get(PASSENGERS)}
-                    image="/static/passengers.jpg"
-                    to={`entry/${PASSENGERS}`}
                 />
             )}
         </div>

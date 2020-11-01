@@ -8,8 +8,9 @@ export const PLACE = 'PLACE';
 export const PLACES = 'PLACES';
 export const FLIGHT_SCHEDULE = 'FLIGHT_SCHEDULE';
 export const PASSENGERS = 'PASSENGERS';
-export const SURNAME = 'SURNAME';
 export const NAME = 'NAME';
+export const FIRST_NAME = 'FIRST_NAME';
+export const SURNAME = 'SURNAME';
 export const PATRONYMIC = 'PATRONYMIC';
 export const DOCUMENT_NUMBER = 'DOCUMENT_NUMBER';
 export const DOCUMENT_SERIES = 'DOCUMENT_SERIES';
@@ -32,7 +33,7 @@ export const VIEWS = new Map([
 
 export const FIELDS = new Map([
     [SURNAME, 'Фамилия'],
-    [NAME, 'Имя'],
+    [FIRST_NAME, 'Имя'],
     [PATRONYMIC, 'Отчество'],
     [DOCUMENT_NUMBER, 'Номер документа'],
     [DOCUMENT_SERIES, 'Серия документа'],

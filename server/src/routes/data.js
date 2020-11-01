@@ -1,5 +1,14 @@
-import { select } from '../db.js';
+import { select, execute } from '../db.js';
 import { getColumns } from '../utils/getColumns.js';
+import { ISO_DATE } from '../constants/expressions.js';
+
+const prepareValue = value => {
+    if (ISO_DATE.test(value)) {
+        return new Date(Date.parse(value));
+    } else {
+        return value;
+    }
+};
 
 export default (fastify, options, done) => {
     fastify.post('/', async (request, reply) => {
@@ -17,6 +26,25 @@ export default (fastify, options, done) => {
         const columns = data.length > 0 ? getColumns(data[0]) : [];
 
         reply.send({ ...total[0], data, columns });
+    });
+
+    fastify.post('/insert', async (request, reply) => {
+        const { table, columns, values } = request.body;
+        const keys = columns.map(column => `:${column}`);
+        const orderedValues = columns.map(column => prepareValue(values[column]));
+        console.log(
+            `INSERT INTO SYS.${table} (${columns.join(', ')})
+            VALUES (${keys.join(', ')})`,
+            orderedValues
+        );
+        const data = await execute(
+            `INSERT INTO SYS.${table} (${columns.join(', ')})
+            VALUES (${keys.join(', ')})`,
+            orderedValues,
+            { autoCommit: true }
+        );
+
+        reply.send(data);
     });
 
     done();

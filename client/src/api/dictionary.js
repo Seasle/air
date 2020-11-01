@@ -12,3 +12,6 @@ const collectURL = (url, search) => {
 
 export const getAvailableFlights = (search, options) =>
     get(collectURL(`${base}/flights`, search), options);
+
+export const getAvailablePlaces = (search, options) =>
+    get(collectURL(`${base}/places`, search), options);

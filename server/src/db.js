@@ -39,3 +39,13 @@ export const select = async (...args) => {
         return error;
     }
 };
+
+export const execute = async (...args) => {
+    try {
+        const result = await connection.execute(...args);
+
+        return result;
+    } catch (error) {
+        return error;
+    }
+};

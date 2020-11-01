@@ -4,21 +4,46 @@ import { DialogTitle, DialogContent, DialogActions, Button, makeStyles } from '@
 import { Formik } from 'formik';
 import ThemedDialog from '../common/ThemedDialog';
 import Field from '../common/Field';
-import { PASSENGERS, FLIGHT_NUMBER, FIELDS } from '../../constants';
-import { getAvailableFlights } from '../../api/dictionary';
-import { snakeToCamel, px } from '../../utils';
+import { PASSENGERS, FLIGHT_NUMBER, FIELDS, PLACE } from '../../constants';
+import { getAvailableFlights, getAvailablePlaces } from '../../api/dictionary';
+import { snakeToCamel, noop, px } from '../../utils';
+import { insertData } from '../../api';
 
 const settings = {
-    [FLIGHT_NUMBER]: {
+    [FLIGHT_NUMBER]: ({ setFieldValue }) => ({
         async: true,
-        endpoint: start =>
-            getAvailableFlights(Boolean(start) ? new URLSearchParams({ start }) : undefined),
+        endpoint: (start = '') => getAvailableFlights(new URLSearchParams({ start })),
+        onChange: value => {
+            setFieldValue(snakeToCamel(PLACE), '');
+        },
+    }),
+    [PLACE]: ({ values }) => {
+        const value = values[snakeToCamel(FLIGHT_NUMBER)];
+
+        return {
+            async: true,
+            endpoint: (start = '') =>
+                getAvailablePlaces(
+                    new URLSearchParams({ flight: value, start: start.toUpperCase() })
+                ),
+            props: {
+                renderOption: option => (
+                    <>
+                        <span>{option.placeType}</span>
+                        {option.place}
+                    </>
+                ),
+                getOptionLabel: option => option.place,
+                disabled: values === null || value === '',
+            },
+        };
     },
 };
 
-const AddPassengerDialog = ({ children, columns, ...props }) => {
+const AddPassengerDialog = ({ children, columns, onChange = noop, ...props }) => {
     const classes = useStyles();
     const [open, setOpen] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
 
     const openDialog = () => setOpen(true);
     const closeDialog = () => setOpen(false);
@@ -29,7 +54,7 @@ const AddPassengerDialog = ({ children, columns, ...props }) => {
                 column: entry.columnName,
                 type: entry.dataType,
                 required: entry.required,
-                settings: settings[entry.columnName] || null,
+                settings: settings[entry.columnName] || (() => ({})),
             };
         }
 
@@ -55,18 +80,50 @@ const AddPassengerDialog = ({ children, columns, ...props }) => {
         return errors;
     };
 
+    const handleSubmit = values => {
+        const combined = Object.keys(fields).reduce(
+            (accumulator, key) => {
+                const column = fields[key].column;
+
+                accumulator.columns.push(column);
+                accumulator.values[column] = column === PLACE ? values[key].place : values[key];
+
+                return accumulator;
+            },
+            {
+                columns: [],
+                values: {},
+            }
+        );
+
+        setSubmitting(true);
+
+        insertData({
+            table: PASSENGERS,
+            ...combined,
+        }).then(() => {
+            setSubmitting(false);
+            setOpen(false);
+
+            onChange();
+        });
+    };
+
     return (
         <>
             {children(openDialog)}
             <ThemedDialog open={open} onClose={closeDialog}>
                 <DialogTitle>Регистрация пассажира</DialogTitle>
-                <Formik initialValues={initialValues} validate={validate}>
+                <Formik initialValues={initialValues} validate={validate} onSubmit={handleSubmit}>
                     {({ values, touched, errors, handleChange, setFieldValue, handleSubmit }) => (
                         <>
                             <DialogContent className={classes.form}>
                                 {Object.keys(fields).map((key, index) => (
                                     <Field
-                                        settings={fields[key].settings}
+                                        settings={fields[key].settings({
+                                            values,
+                                            setFieldValue,
+                                        })}
                                         label={FIELDS.get(fields[key].column) || fields[key].column}
                                         type={fields[key].type}
                                         name={key}
@@ -74,6 +131,7 @@ const AddPassengerDialog = ({ children, columns, ...props }) => {
                                         helperText={touched[key] && errors[key]}
                                         required={fields[key].required}
                                         error={Boolean(touched[key] && errors[key])}
+                                        autoComplete="off"
                                         onChange={handleChange}
                                         setFieldValue={setFieldValue}
                                         key={index}
@@ -82,10 +140,15 @@ const AddPassengerDialog = ({ children, columns, ...props }) => {
                                 <pre>{JSON.stringify(values, null, 2)}</pre>
                             </DialogContent>
                             <DialogActions>
-                                <Button color="primary" onClick={closeDialog}>
+                                <Button color="primary" onClick={closeDialog} disabled={submitting}>
                                     Отменить
                                 </Button>
-                                <Button color="primary" variant="contained" onClick={handleSubmit}>
+                                <Button
+                                    color="primary"
+                                    variant="contained"
+                                    disabled={submitting}
+                                    onClick={handleSubmit}
+                                >
                                     Зарегистрировать
                                 </Button>
                             </DialogActions>

@@ -55,24 +55,7 @@ const Entry = props => {
     const [page, setPage] = useState(0);
     const [isEmpty, setIsEmpty] = useState(false);
 
-    const handleChangePage = (event, page) => setPage(page);
-
-    const handleChangeSize = event => {
-        const value = Number(event.target.value);
-
-        setSize(value);
-        setPage(state => Math.max(0, Math.min(state, Math.ceil(total / value) - 1)));
-    };
-
-    const changeSorting = key => {
-        if (order === key) {
-            setDirection(state => (state === 'ASC' ? 'DESC' : 'ASC'));
-        }
-
-        setOrder(key);
-    };
-
-    useEffect(() => {
+    const load = () => {
         const { token, cancel } = CancelToken.source();
 
         getData(
@@ -97,7 +80,32 @@ const Entry = props => {
         });
 
         return () => cancel();
+    };
+
+    const handleChangePage = (event, page) => setPage(page);
+
+    const handleChangeSize = event => {
+        const value = Number(event.target.value);
+
+        setSize(value);
+        setPage(state => Math.max(0, Math.min(state, Math.ceil(total / value) - 1)));
+    };
+
+    const changeSorting = key => {
+        if (order === key) {
+            setDirection(state => (state === 'ASC' ? 'DESC' : 'ASC'));
+        }
+
+        setOrder(key);
+    };
+
+    useEffect(() => {
+        return load();
     }, [params.name, order, direction, page, size]);
+
+    const handleUpdate = () => {
+        load();
+    };
 
     return !accessGranted ? (
         <Redirect to="/" />
@@ -113,7 +121,7 @@ const Entry = props => {
                 >
                     Назад
                 </RouteButton>
-                <EntryActions current={params.name} />
+                <EntryActions current={params.name} onChange={handleUpdate} />
             </div>
             <Paper className={classes.paper}>
                 <Typography variant="h5" component="h2">

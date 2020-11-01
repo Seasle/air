@@ -28,6 +28,7 @@ const Field = ({ type, settings, label, name, value, onChange, setFieldValue, ..
                     value={value}
                     onChange={setFieldValue}
                     {...props}
+                    {...settings.props}
                 />
             );
         default:
@@ -40,6 +41,7 @@ const Field = ({ type, settings, label, name, value, onChange, setFieldValue, ..
                     value={value}
                     onChange={onChange}
                     {...props}
+                    {...settings.props}
                 />
             );
     }

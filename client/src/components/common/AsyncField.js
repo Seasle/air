@@ -17,6 +17,12 @@ const ThemedAutocomplete = withStyles(theme => ({
             },
         },
     },
+    option: {
+        '& > span': {
+            marginRight: 10,
+            fontStyle: 'italic',
+        },
+    },
     endAdornment: {},
 }))(Autocomplete);
 
@@ -24,6 +30,7 @@ const AsyncField = ({ settings, label, name, variant, onChange, ...props }) => {
     const [open, setOpen] = useState(false);
     const [options, setOptions] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [id, setId] = useState(undefined);
 
     const load = value => {
         setLoading(true);
@@ -38,6 +45,10 @@ const AsyncField = ({ settings, label, name, variant, onChange, ...props }) => {
     };
 
     const debouncedLoad = debounce(load, 500);
+
+    useEffect(() => {
+        setId(`${Math.random().toString(36).slice(2)}_${name}`);
+    }, []);
 
     useEffect(() => {
         if (open) {
@@ -65,6 +76,7 @@ const AsyncField = ({ settings, label, name, variant, onChange, ...props }) => {
 
     return (
         <ThemedAutocomplete
+            id={id}
             open={open}
             onOpen={() => setOpen(true)}
             onClose={() => setOpen(false)}
@@ -89,6 +101,7 @@ const AsyncField = ({ settings, label, name, variant, onChange, ...props }) => {
                     {...props}
                 />
             )}
+            {...settings.props}
         />
     );
 };

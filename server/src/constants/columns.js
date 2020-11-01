@@ -13,4 +13,10 @@ export default {
     arrivalCity: 'Город прилета',
     totalPlaces: 'Всего мест',
     freePlaces: 'Свободных мест',
+    documentNumber: 'Номер документа',
+    documentSeries: 'Серия документа',
+    firstName: 'Имя',
+    surname: 'Фамилия',
+    patronymic: 'Отчество',
+    place: 'Место',
 };

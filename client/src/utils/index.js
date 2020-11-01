@@ -1,3 +1,5 @@
+import format from './format';
+
 /**
  * @param {number} value
  * @returns {string}
@@ -41,6 +43,14 @@ export const parse = (value, column) => {
         ]
             .filter(entry => entry !== null)
             .join(' ');
+    } else {
+        return value;
+    }
+};
+
+export const stringifyValue = value => {
+    if (value instanceof Date) {
+        return format(value, '[day]/[month]/[year]');
     } else {
         return value;
     }

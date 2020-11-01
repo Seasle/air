@@ -14,7 +14,7 @@ const EntryActions = ({ permissions, ...props }) => {
     return (
         <>
             {props.current === PASSENGERS && permissions.insert && (
-                <AddPassengerDialog>
+                <AddPassengerDialog {...props}>
                     {openDialog => (
                         <ThemedButton color="primary" variant="contained" onClick={openDialog}>
                             Добавить

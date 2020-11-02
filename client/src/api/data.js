@@ -6,4 +6,6 @@ export const getData = (params, options) => post(base, params, options);
 
 export const insertData = (params, options) => post(`${base}/insert`, params, options);
 
+export const updateData = (params, options) => post(`${base}/update`, params, options);
+
 export const deleteData = (params, options) => post(`${base}/delete`, params, options);

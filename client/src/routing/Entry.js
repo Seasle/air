@@ -17,9 +17,10 @@ import {
     withStyles,
 } from '@material-ui/core';
 import { Alert, AlertTitle } from '@material-ui/lab';
-import { ArrowBack, Delete } from '@material-ui/icons';
+import { ArrowBack, Edit, Delete } from '@material-ui/icons';
 import RouteButton from '../components/RouteButton';
 import EntryActions from '../components/EntryActions';
+import EditDialog from '../components/dialogs/EditDialog';
 import DeleteDialog from '../components/dialogs/DeleteDialog';
 import { ENTRIES } from '../constants';
 import { getData } from '../api';
@@ -171,6 +172,19 @@ const Entry = props => {
                                             ))}
                                             {canUpdateOrDelete && (
                                                 <ThemedTableCell>
+                                                    {permissions?.update && (
+                                                        <EditDialog
+                                                            current={params.name}
+                                                            data={entry}
+                                                            onChange={handleUpdate}
+                                                        >
+                                                            {openDialog => (
+                                                                <IconButton size="small" onClick={openDialog}>
+                                                                    <Edit />
+                                                                </IconButton>
+                                                            )}
+                                                        </EditDialog>
+                                                    )}
                                                     {permissions?.delete && (
                                                         <DeleteDialog
                                                             table={params.name}

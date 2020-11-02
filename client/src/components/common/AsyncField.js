@@ -26,7 +26,7 @@ const ThemedAutocomplete = withStyles(theme => ({
     endAdornment: {},
 }))(Autocomplete);
 
-const AsyncField = ({ settings, label, name, variant, onChange, ...props }) => {
+const AsyncField = ({ settings, label, name, value, variant, onChange, ...props }) => {
     const [open, setOpen] = useState(false);
     const [options, setOptions] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -82,6 +82,7 @@ const AsyncField = ({ settings, label, name, variant, onChange, ...props }) => {
             onClose={() => setOpen(false)}
             options={options}
             loading={loading}
+            value={value || null}
             onChange={handleChange}
             renderInput={params => (
                 <TextField

@@ -7,23 +7,25 @@ import Field from '../common/Field';
 import { PASSENGERS, FLIGHT_NUMBER, FIELDS, PLACE } from '../../constants';
 import { getAvailableFlights, getAvailablePlaces } from '../../api/dictionary';
 import { snakeToCamel, noop, px } from '../../utils';
-import { insertData } from '../../api';
+import { insertData, updateData } from '../../api';
 
 const settings = {
-    [FLIGHT_NUMBER]: ({ setFieldValue }) => ({
+    [FLIGHT_NUMBER]: ({ setFieldValue = noop }) => ({
         async: true,
         endpoint: (start = '') => getAvailableFlights(new URLSearchParams({ start })),
+        toOption: value => value,
         onChange: value => {
             setFieldValue(snakeToCamel(PLACE), '');
         },
     }),
-    [PLACE]: ({ values }) => {
+    [PLACE]: ({ values = {} }) => {
         const value = values[snakeToCamel(FLIGHT_NUMBER)];
 
         return {
             async: true,
             endpoint: (start = '') =>
                 getAvailablePlaces(new URLSearchParams({ flight: value, start: start.toUpperCase() })),
+            toOption: value => ({ place: value }),
             props: {
                 renderOption: option => (
                     <>
@@ -38,10 +40,11 @@ const settings = {
     },
 };
 
-const PassengerDialog = ({ children, columns, onChange = noop, ...props }) => {
+const PassengerDialog = ({ children, columns, data = {}, onChange = noop, ...props }) => {
     const classes = useStyles();
     const [open, setOpen] = useState(false);
     const [submitting, setSubmitting] = useState(false);
+    const existingPassenger = data.id !== undefined;
 
     const openDialog = () => setOpen(true);
     const closeDialog = () => setOpen(false);
@@ -60,7 +63,9 @@ const PassengerDialog = ({ children, columns, onChange = noop, ...props }) => {
     }, {});
 
     const initialValues = Object.keys(fields).reduce((accumulator, field) => {
-        accumulator[field] = '';
+        const value = data[field] || '';
+        const fieldSettings = fields[field].settings({});
+        accumulator[field] = fieldSettings?.async ? fieldSettings.toOption(value) : value;
 
         return accumulator;
     }, {});
@@ -96,7 +101,7 @@ const PassengerDialog = ({ children, columns, onChange = noop, ...props }) => {
 
         setSubmitting(true);
 
-        insertData({
+        (data.id === undefined ? insertData : updateData)({
             table: PASSENGERS,
             ...combined,
         }).then(() => {
@@ -111,7 +116,7 @@ const PassengerDialog = ({ children, columns, onChange = noop, ...props }) => {
         <>
             {children(openDialog)}
             <ThemedDialog open={open} onClose={closeDialog}>
-                <DialogTitle>Регистрация пассажира</DialogTitle>
+                <DialogTitle>{!existingPassenger ? 'Регистрация пассажира' : 'Изменение данных пассажира'}</DialogTitle>
                 <Formik initialValues={initialValues} validate={validate} onSubmit={handleSubmit}>
                     {({ values, touched, errors, handleChange, setFieldValue, handleSubmit }) => (
                         <>
@@ -146,7 +151,7 @@ const PassengerDialog = ({ children, columns, onChange = noop, ...props }) => {
                                     disabled={submitting}
                                     onClick={handleSubmit}
                                 >
-                                    Зарегистрировать
+                                    {!existingPassenger ? 'Зарегистрировать' : 'Изменить'}
                                 </Button>
                             </DialogActions>
                         </>

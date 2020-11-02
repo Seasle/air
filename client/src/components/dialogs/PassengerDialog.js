@@ -40,7 +40,7 @@ const settings = {
     },
 };
 
-const AddPassengerDialog = ({ children, columns, onChange = noop, ...props }) => {
+const PassengerDialog = ({ children, columns, onChange = noop, ...props }) => {
     const classes = useStyles();
     const [open, setOpen] = useState(false);
     const [submitting, setSubmitting] = useState(false);
@@ -137,7 +137,6 @@ const AddPassengerDialog = ({ children, columns, onChange = noop, ...props }) =>
                                         key={index}
                                     />
                                 ))}
-                                <pre>{JSON.stringify(values, null, 2)}</pre>
                             </DialogContent>
                             <DialogActions>
                                 <Button color="primary" onClick={closeDialog} disabled={submitting}>
@@ -172,4 +171,4 @@ const mapStateToProps = state => ({
     columns: state.metaData.columns[PASSENGERS],
 });
 
-export default connect(mapStateToProps)(AddPassengerDialog);
+export default connect(mapStateToProps)(PassengerDialog);

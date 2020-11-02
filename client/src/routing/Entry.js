@@ -44,15 +44,20 @@ const ThemedTableRow = withStyles(theme => ({
 const Entry = props => {
     const classes = useStyles();
     const { params } = useRouteMatch();
-    const accessGranted = props.allowed.some(entry => entry.tableName === params.name);
+    const permissions = props.allowed.find(entry => entry.tableName === params.name);
+    const accessGranted = permissions !== undefined;
 
-    const [data, setData] = useState([]);
-    const [columns, setColumns] = useState([]);
-    const [total, setTotal] = useState(0);
+    const [table, setTable] = useState({
+        total: 0,
+        data: [],
+        columns: [],
+    });
+    const [pagination, setPagination] = useState({
+        page: 0,
+        size: 10,
+    });
     const [order, setOrder] = useState(null);
     const [direction, setDirection] = useState('DESC');
-    const [size, setSize] = useState(10);
-    const [page, setPage] = useState(0);
     const [isEmpty, setIsEmpty] = useState(false);
 
     const load = () => {
@@ -63,8 +68,8 @@ const Entry = props => {
                 name: params.name,
                 order: camelToSnake(order),
                 direction,
-                page,
-                size,
+                page: pagination.page,
+                size: pagination.size,
             },
             {
                 cancelToken: token,
@@ -73,22 +78,22 @@ const Entry = props => {
             if (data.length === 0 || columns.length === 0) {
                 setIsEmpty(true);
             } else {
-                setTotal(total);
-                setData(data);
-                setColumns(columns);
+                setTable({ total, data, columns });
             }
         });
 
         return () => cancel();
     };
 
-    const handleChangePage = (event, page) => setPage(page);
+    const handleChangePage = (event, page) => setPagination(state => ({ ...state, page }));
 
     const handleChangeSize = event => {
         const value = Number(event.target.value);
 
-        setSize(value);
-        setPage(state => Math.max(0, Math.min(state, Math.ceil(total / value) - 1)));
+        setPagination(state => ({
+            page: Math.max(0, Math.min(state.page, Math.ceil(table.total / value) - 1)),
+            size: value,
+        }));
     };
 
     const changeSorting = key => {
@@ -99,13 +104,13 @@ const Entry = props => {
         setOrder(key);
     };
 
-    useEffect(() => {
-        return load();
-    }, [params.name, order, direction, page, size]);
-
     const handleUpdate = () => {
         load();
     };
+
+    useEffect(() => {
+        return load();
+    }, [params.name, order, direction, pagination]);
 
     return !accessGranted ? (
         <Redirect to="/" />
@@ -121,7 +126,11 @@ const Entry = props => {
                 >
                     Назад
                 </RouteButton>
-                <EntryActions current={params.name} onChange={handleUpdate} />
+                <EntryActions
+                    current={params.name}
+                    permissions={permissions}
+                    onChange={handleUpdate}
+                />
             </div>
             <Paper className={classes.paper}>
                 <Typography variant="h5" component="h2">
@@ -141,7 +150,7 @@ const Entry = props => {
                             <Table className={classes.table}>
                                 <TableHead>
                                     <TableRow>
-                                        {columns.map((column, index) => (
+                                        {table.columns.map((column, index) => (
                                             <ThemedTableCell key={index}>
                                                 <TableSortLabel
                                                     active={order === column.key}
@@ -155,9 +164,9 @@ const Entry = props => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {data.map((entry, index) => (
+                                    {table.data.map((entry, index) => (
                                         <ThemedTableRow key={index}>
-                                            {columns.map((column, index) => (
+                                            {table.columns.map((column, index) => (
                                                 <ThemedTableCell key={index}>
                                                     {parse(entry[column.key], column.key)}
                                                 </ThemedTableCell>
@@ -170,9 +179,9 @@ const Entry = props => {
                         <TablePagination
                             rowsPerPageOptions={[10, 25, 100]}
                             component="div"
-                            count={total}
-                            page={page}
-                            rowsPerPage={size}
+                            count={table.total}
+                            page={pagination.page}
+                            rowsPerPage={pagination.size}
                             onChangePage={handleChangePage}
                             onChangeRowsPerPage={handleChangeSize}
                         />

@@ -11,11 +11,7 @@ const Views = props => {
     return (
         <div className={classes.root}>
             {props.entries.has(PLACE) && (
-                <EntryCard
-                    title={props.entries.get(PLACE)}
-                    image="/static/city.jpg"
-                    to={`entry/${PLACE}`}
-                />
+                <EntryCard title={props.entries.get(PLACE)} image="/static/city.jpg" to={`entry/${PLACE}`} />
             )}
             {props.entries.has(PLACES) && (
                 <EntryCard

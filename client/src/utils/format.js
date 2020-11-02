@@ -14,9 +14,7 @@ const formatter = new Intl.DateTimeFormat(navigator.language, {
  */
 const format = (date, placeholder = null) => {
     if (placeholder !== null) {
-        const parts = new Map(
-            formatter.formatToParts(date).map(entry => [entry.type, entry.value])
-        );
+        const parts = new Map(formatter.formatToParts(date).map(entry => [entry.type, entry.value]));
         const formatted = placeholder.replace(/\[(\w+)\]/g, (match, key) => {
             if (parts.has(key)) {
                 return parts.get(key);

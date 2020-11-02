@@ -16,9 +16,7 @@ const Home = props => {
 
     return (
         <div className={clsx(classes.root, props.isToolbarPinned && classes.offset)}>
-            <Menu>
-                {openMenu => <Header isToolbarPinned={props.isToolbarPinned} openMenu={openMenu} />}
-            </Menu>
+            <Menu>{openMenu => <Header isToolbarPinned={props.isToolbarPinned} openMenu={openMenu} />}</Menu>
             <div className={classes.container}>
                 <Switch>
                     <Route exact path="/">

@@ -11,9 +11,7 @@ export const noop = () => {};
 export const camelToSnake = value => (value || '').replace(/[A-Z]/g, '_$&').toUpperCase();
 
 export const snakeToCamel = value =>
-    (value || '')
-        .toLowerCase()
-        .replace(/([-_][a-z])/g, group => group.toUpperCase().replace(/[-_]/g, ''));
+    (value || '').toLowerCase().replace(/([-_][a-z])/g, group => group.toUpperCase().replace(/[-_]/g, ''));
 
 export const debounce = (handle, duration = 0) => {
     let timeout = null;

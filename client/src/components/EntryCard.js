@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-    Card,
-    CardMedia,
-    CardContent,
-    CardActions,
-    Typography,
-    makeStyles,
-} from '@material-ui/core';
+import { Card, CardMedia, CardContent, CardActions, Typography, makeStyles } from '@material-ui/core';
 import RouteButton from './RouteButton';
 
 const EntryCard = props => {
@@ -14,11 +7,7 @@ const EntryCard = props => {
 
     return (
         <Card>
-            <CardMedia
-                className={classes.media}
-                image={props.image}
-                title="Contemplative Reptile"
-            />
+            <CardMedia className={classes.media} image={props.image} title="Contemplative Reptile" />
             <CardContent>
                 <Typography variant="h5" component="h2">
                     {props.title}

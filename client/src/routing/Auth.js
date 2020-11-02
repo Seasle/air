@@ -1,14 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {
-    Card,
-    CardHeader,
-    CardActions,
-    Button,
-    Avatar,
-    Typography,
-    makeStyles,
-} from '@material-ui/core';
+import { Card, CardHeader, CardActions, Button, Avatar, Typography, makeStyles } from '@material-ui/core';
 import { updateUser } from '../redux/actions/userActions';
 import { setAllowed, setColumns } from '../redux/actions/metaDataActions';
 import { px } from '../utils';
@@ -58,11 +50,7 @@ const Auth = props => {
                             title={<Typography variant="h6">{user.name}</Typography>}
                         />
                         <CardActions>
-                            <Button
-                                className={classes.button}
-                                color="primary"
-                                onClick={() => handleClick(user)}
-                            >
+                            <Button className={classes.button} color="primary" onClick={() => handleClick(user)}>
                                 Войти
                             </Button>
                         </CardActions>

@@ -28,11 +28,7 @@ const App = props => {
         <Router>
             <Suspense fallback={<Loader />}>
                 <Switch>
-                    <Route
-                        exact
-                        path="/auth"
-                        render={() => (!userSelected ? <Auth /> : <Redirect to="/" />)}
-                    />
+                    <Route exact path="/auth" render={() => (!userSelected ? <Auth /> : <Redirect to="/" />)} />
                     <Route
                         exact
                         path={['/', '/:module', '/:module/:name']}

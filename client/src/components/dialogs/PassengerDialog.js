@@ -23,9 +23,7 @@ const settings = {
         return {
             async: true,
             endpoint: (start = '') =>
-                getAvailablePlaces(
-                    new URLSearchParams({ flight: value, start: start.toUpperCase() })
-                ),
+                getAvailablePlaces(new URLSearchParams({ flight: value, start: start.toUpperCase() })),
             props: {
                 renderOption: option => (
                     <>

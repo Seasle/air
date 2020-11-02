@@ -11,25 +11,13 @@ const Views = props => {
     return (
         <div className={classes.root}>
             {props.entries.has(CITY) && (
-                <EntryCard
-                    title={props.entries.get(CITY)}
-                    image="/static/city.jpg"
-                    to={`entry/${CITY}`}
-                />
+                <EntryCard title={props.entries.get(CITY)} image="/static/city.jpg" to={`entry/${CITY}`} />
             )}
             {props.entries.has(COUNTRY) && (
-                <EntryCard
-                    title={props.entries.get(COUNTRY)}
-                    image="/static/country.jpg"
-                    to={`entry/${COUNTRY}`}
-                />
+                <EntryCard title={props.entries.get(COUNTRY)} image="/static/country.jpg" to={`entry/${COUNTRY}`} />
             )}
             {props.entries.has(FLIGHT) && (
-                <EntryCard
-                    title={props.entries.get(FLIGHT)}
-                    image="/static/airplane.jpg"
-                    to={`entry/${FLIGHT}`}
-                />
+                <EntryCard title={props.entries.get(FLIGHT)} image="/static/airplane.jpg" to={`entry/${FLIGHT}`} />
             )}
             {props.entries.has(PASSENGERS) && (
                 <EntryCard

@@ -28,8 +28,7 @@ const Menu = ({ children, ...props }) => {
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-    const toggleMenu = () =>
-        props.changeMenuType(props.menuType === 'temporary' ? 'permanent' : 'temporary');
+    const toggleMenu = () => props.changeMenuType(props.menuType === 'temporary' ? 'permanent' : 'temporary');
 
     useEffect(() => {
         if (props.menuType === 'permanent') {

@@ -12,13 +12,15 @@ import {
     TableCell,
     TableSortLabel,
     Typography,
+    IconButton,
     makeStyles,
     withStyles,
 } from '@material-ui/core';
 import { Alert, AlertTitle } from '@material-ui/lab';
-import { ArrowBack } from '@material-ui/icons';
+import { ArrowBack, Delete } from '@material-ui/icons';
 import RouteButton from '../components/RouteButton';
 import EntryActions from '../components/EntryActions';
+import DeleteDialog from '../components/dialogs/DeleteDialog';
 import { ENTRIES } from '../constants';
 import { getData } from '../api';
 import { CancelToken } from 'axios';
@@ -46,6 +48,7 @@ const Entry = props => {
     const { params } = useRouteMatch();
     const permissions = props.allowed.find(entry => entry.tableName === params.name);
     const accessGranted = permissions !== undefined;
+    const canUpdateOrDelete = permissions?.update || permissions?.delete;
 
     const [table, setTable] = useState({
         total: 0,
@@ -126,11 +129,7 @@ const Entry = props => {
                 >
                     Назад
                 </RouteButton>
-                <EntryActions
-                    current={params.name}
-                    permissions={permissions}
-                    onChange={handleUpdate}
-                />
+                <EntryActions current={params.name} permissions={permissions} onChange={handleUpdate} />
             </div>
             <Paper className={classes.paper}>
                 <Typography variant="h5" component="h2">
@@ -144,9 +143,7 @@ const Entry = props => {
                 )}
                 {!isEmpty && (
                     <>
-                        <TableContainer
-                            component={props => <Paper variant="outlined" {...props} />}
-                        >
+                        <TableContainer component={props => <Paper variant="outlined" {...props} />}>
                             <Table className={classes.table}>
                                 <TableHead>
                                     <TableRow>
@@ -161,6 +158,7 @@ const Entry = props => {
                                                 </TableSortLabel>
                                             </ThemedTableCell>
                                         ))}
+                                        {canUpdateOrDelete && <ThemedTableCell></ThemedTableCell>}
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -171,6 +169,23 @@ const Entry = props => {
                                                     {parse(entry[column.key], column.key)}
                                                 </ThemedTableCell>
                                             ))}
+                                            {canUpdateOrDelete && (
+                                                <ThemedTableCell>
+                                                    {permissions?.delete && (
+                                                        <DeleteDialog
+                                                            table={params.name}
+                                                            id={entry.id}
+                                                            onChange={handleUpdate}
+                                                        >
+                                                            {openDialog => (
+                                                                <IconButton size="small" onClick={openDialog}>
+                                                                    <Delete />
+                                                                </IconButton>
+                                                            )}
+                                                        </DeleteDialog>
+                                                    )}
+                                                </ThemedTableCell>
+                                            )}
                                         </ThemedTableRow>
                                     ))}
                                 </TableBody>

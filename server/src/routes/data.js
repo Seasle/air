@@ -42,22 +42,20 @@ export default (fastify, options, done) => {
         reply.send(data);
     });
 
-    // fastify.post('/update', async (request, reply) => {
-    // const { table, columns, values } = request.body;
-    // const keys = columns.map(column => `:${column}`);
-    // const orderedValues = columns.map(column => prepareValue(values[column]));
-    // const data = await execute(
-    //     `UPDATE SYS.${table} (${columns.join(', ')})
-    //     VALUES (${keys.join(', ')})`,
-    //     orderedValues,
-    //     { autoCommit: true }
-    // );
-    // reply.send({
-    //     sql: `INSERT INTO SYS.${table} (${columns.join(', ')}) VALUES (${keys.join(', ')})`,
-    //     orderedValues,
-    //     _: { autoCommit: true },
-    // });
-    // });
+    fastify.post('/update', async (request, reply) => {
+        const { id, table, columns, values } = request.body;
+        const pairs = columns.map(column => `${column} = :${column}`);
+        const orderedValues = columns.map(column => prepareValue(values[column]));
+        const data = await execute(
+            `UPDATE SYS.${table}
+            SET ${pairs.join(', ')}
+            WHERE ID = :ID`,
+            [...orderedValues, id],
+            { autoCommit: true }
+        );
+
+        reply.send(data);
+    });
 
     fastify.post('/delete', async (request, reply) => {
         const { table, id } = request.body;

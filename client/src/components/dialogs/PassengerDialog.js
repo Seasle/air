@@ -102,6 +102,7 @@ const PassengerDialog = ({ children, columns, data = {}, onChange = noop, ...pro
         setSubmitting(true);
 
         (data.id === undefined ? insertData : updateData)({
+            id: data.id ?? null,
             table: PASSENGERS,
             ...combined,
         }).then(() => {

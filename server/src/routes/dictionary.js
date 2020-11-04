@@ -46,5 +46,50 @@ export default (fastify, options, done) => {
         reply.send(data);
     });
 
+    fastify.get('/airplanes', async (request, reply) => {
+        const data = await select(
+            `SELECT *
+            FROM (
+                SELECT *
+                FROM SYS.AIRPLANE
+                WHERE NAME LIKE :STARTS||'%'
+            )
+            WHERE ROWNUM <= 50`,
+            [request.query.start || '']
+        );
+
+        reply.send(data);
+    });
+
+    fastify.get('/cities', async (request, reply) => {
+        const data = await select(
+            `SELECT *
+            FROM (
+                SELECT *
+                FROM SYS.PLACE
+                WHERE CITY LIKE :STARTS||'%'
+            )
+            WHERE ROWNUM <= 50`,
+            [request.query.start || '']
+        );
+
+        reply.send(data);
+    });
+
+    fastify.get('/countries', async (request, reply) => {
+        const data = await select(
+            `SELECT *
+            FROM (
+                SELECT *
+                FROM SYS.COUNTRY
+                WHERE NAME LIKE :STARTS||'%'
+            )
+            WHERE ROWNUM <= 50`,
+            [request.query.start || '']
+        );
+
+        reply.send(data);
+    });
+
     done();
 };

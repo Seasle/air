@@ -4,42 +4,13 @@ import { DialogTitle, DialogContent, DialogActions, Button, makeStyles } from '@
 import { Formik } from 'formik';
 import ThemedDialog from '../common/ThemedDialog';
 import Field from '../common/Field';
-import { PASSENGERS, FLIGHT_NUMBER, FIELDS, PLACE } from '../../constants';
+import { COUNTRY, FIELDS } from '../../constants';
 import { snakeToCamel, noop, px } from '../../utils';
-import { insertData, updateData, getAvailableFlights, getAvailablePlaces } from '../../api';
+import { insertData, updateData } from '../../api';
 
-const settings = {
-    [FLIGHT_NUMBER]: ({ setFieldValue = noop }) => ({
-        async: true,
-        endpoint: (start = '') => getAvailableFlights(new URLSearchParams({ start })),
-        toOption: value => value,
-        onChange: value => {
-            setFieldValue(snakeToCamel(PLACE), '');
-        },
-    }),
-    [PLACE]: ({ values = {} }) => {
-        const value = values[snakeToCamel(FLIGHT_NUMBER)];
+const settings = {};
 
-        return {
-            async: true,
-            endpoint: (start = '') =>
-                getAvailablePlaces(new URLSearchParams({ flight: value, start: start.toUpperCase() })),
-            toOption: value => ({ place: value }),
-            props: {
-                renderOption: option => (
-                    <>
-                        <span>{option.placeType}</span>
-                        {option.place}
-                    </>
-                ),
-                getOptionLabel: option => option.place,
-                disabled: values === null || value === '',
-            },
-        };
-    },
-};
-
-const PassengerDialog = ({ children, columns, data = {}, onChange = noop, ...props }) => {
+const CountryDialog = ({ children, columns, data = {}, onChange = noop, ...props }) => {
     const classes = useStyles();
     const [open, setOpen] = useState(false);
     const [submitting, setSubmitting] = useState(false);
@@ -88,7 +59,7 @@ const PassengerDialog = ({ children, columns, data = {}, onChange = noop, ...pro
                 const column = fields[key].column;
 
                 accumulator.columns.push(column);
-                accumulator.values[column] = column === PLACE ? values[key].place : values[key];
+                accumulator.values[column] = values[key];
 
                 return accumulator;
             },
@@ -102,7 +73,7 @@ const PassengerDialog = ({ children, columns, data = {}, onChange = noop, ...pro
 
         (data.id === undefined ? insertData : updateData)({
             id: data.id ?? null,
-            table: PASSENGERS,
+            table: COUNTRY,
             ...combined,
         }).then(() => {
             setSubmitting(false);
@@ -116,7 +87,7 @@ const PassengerDialog = ({ children, columns, data = {}, onChange = noop, ...pro
         <>
             {children(openDialog)}
             <ThemedDialog open={open} onClose={closeDialog}>
-                <DialogTitle>{!existingPassenger ? 'Регистрация пассажира' : 'Изменение данных пассажира'}</DialogTitle>
+                <DialogTitle>{!existingPassenger ? 'Создание города' : 'Редактирование города'}</DialogTitle>
                 <Formik initialValues={initialValues} validate={validate} onSubmit={handleSubmit}>
                     {({ values, touched, errors, handleChange, setFieldValue, handleSubmit }) => (
                         <>
@@ -151,7 +122,7 @@ const PassengerDialog = ({ children, columns, data = {}, onChange = noop, ...pro
                                     disabled={submitting}
                                     onClick={handleSubmit}
                                 >
-                                    {!existingPassenger ? 'Зарегистрировать' : 'Изменить'}
+                                    {!existingPassenger ? 'Создать' : 'Изменить'}
                                 </Button>
                             </DialogActions>
                         </>
@@ -171,7 +142,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const mapStateToProps = state => ({
-    columns: state.metaData.columns[PASSENGERS],
+    columns: state.metaData.columns[COUNTRY],
 });
 
-export default connect(mapStateToProps)(PassengerDialog);
+export default connect(mapStateToProps)(CountryDialog);

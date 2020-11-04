@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, CircularProgress, withStyles } from '@material-ui/core';
-import { Autocomplete } from '@material-ui/lab';
+import { Autocomplete, createFilterOptions } from '@material-ui/lab';
 import { debounce } from '../../utils';
 
 const ThemedAutocomplete = withStyles(theme => ({
@@ -25,6 +25,8 @@ const ThemedAutocomplete = withStyles(theme => ({
     },
     endAdornment: {},
 }))(Autocomplete);
+
+const filter = createFilterOptions();
 
 const AsyncField = ({ settings, label, name, value, variant, onChange, ...props }) => {
     const [open, setOpen] = useState(false);
@@ -84,6 +86,15 @@ const AsyncField = ({ settings, label, name, value, variant, onChange, ...props 
             loading={loading}
             value={value || null}
             onChange={handleChange}
+            filterOptions={(options, params) => {
+                const filtered = filter(options, params);
+
+                if (settings?.props?.freeSolo && params.inputValue !== '') {
+                    filtered.push(settings.toOption(params.inputValue));
+                }
+
+                return filtered;
+            }}
             renderInput={params => (
                 <TextField
                     {...params}

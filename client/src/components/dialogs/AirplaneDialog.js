@@ -4,42 +4,58 @@ import { DialogTitle, DialogContent, DialogActions, Button, makeStyles } from '@
 import { Formik } from 'formik';
 import ThemedDialog from '../common/ThemedDialog';
 import Field from '../common/Field';
-import { PASSENGERS, FLIGHT_NUMBER, FIELDS, PLACE } from '../../constants';
+import { FLIGHT, FLIGHT_NUMBER, AIRPLANE_ID, DEPARTURE_ID, ARRIVAL_ID, FIELDS } from '../../constants';
 import { snakeToCamel, noop, px } from '../../utils';
-import { insertData, updateData, getAvailableFlights, getAvailablePlaces } from '../../api';
+import { insertData, updateData, getAvailableFlights, getAvailableAirplanes, getAvailableCities } from '../../api';
 
 const settings = {
-    [FLIGHT_NUMBER]: ({ setFieldValue = noop }) => ({
+    [FLIGHT_NUMBER]: () => ({
         async: true,
         endpoint: (start = '') => getAvailableFlights(new URLSearchParams({ start })),
         toOption: value => value,
-        onChange: value => {
-            setFieldValue(snakeToCamel(PLACE), '');
+        props: {
+            freeSolo: true,
         },
     }),
-    [PLACE]: ({ values = {} }) => {
-        const value = values[snakeToCamel(FLIGHT_NUMBER)];
-
-        return {
-            async: true,
-            endpoint: (start = '') =>
-                getAvailablePlaces(new URLSearchParams({ flight: value, start: start.toUpperCase() })),
-            toOption: value => ({ place: value }),
-            props: {
-                renderOption: option => (
-                    <>
-                        <span>{option.placeType}</span>
-                        {option.place}
-                    </>
-                ),
-                getOptionLabel: option => option.place,
-                disabled: values === null || value === '',
-            },
-        };
-    },
+    [AIRPLANE_ID]: () => ({
+        async: true,
+        endpoint: (start = '') => getAvailableAirplanes(new URLSearchParams({ start })),
+        toOption: value => ({ name: value }),
+        props: {
+            getOptionLabel: option => option.name,
+        },
+    }),
+    [DEPARTURE_ID]: () => ({
+        async: true,
+        endpoint: (start = '') => getAvailableCities(new URLSearchParams({ start })),
+        toOption: value => ({ city: value }),
+        props: {
+            renderOption: option => (
+                <>
+                    <span>{option.country}</span>
+                    {option.city}
+                </>
+            ),
+            getOptionLabel: option => option.city,
+        },
+    }),
+    [ARRIVAL_ID]: () => ({
+        async: true,
+        endpoint: (start = '') => getAvailableCities(new URLSearchParams({ start })),
+        toOption: value => ({ city: value }),
+        props: {
+            renderOption: option => (
+                <>
+                    <span>{option.country}</span>
+                    {option.city}
+                </>
+            ),
+            getOptionLabel: option => option.city,
+        },
+    }),
 };
 
-const PassengerDialog = ({ children, columns, data = {}, onChange = noop, ...props }) => {
+const AirplaneDialog = ({ children, columns, data = {}, onChange = noop, ...props }) => {
     const classes = useStyles();
     const [open, setOpen] = useState(false);
     const [submitting, setSubmitting] = useState(false);
@@ -64,7 +80,7 @@ const PassengerDialog = ({ children, columns, data = {}, onChange = noop, ...pro
     const initialValues = Object.keys(fields).reduce((accumulator, field) => {
         const value = data[field] || '';
         const fieldSettings = fields[field].settings({});
-        accumulator[field] = fieldSettings?.async ? fieldSettings.toOption(value) : value;
+        accumulator[field] = fieldSettings?.async && data.id !== undefined ? fieldSettings.toOption(value) : value;
 
         return accumulator;
     }, {});
@@ -88,7 +104,18 @@ const PassengerDialog = ({ children, columns, data = {}, onChange = noop, ...pro
                 const column = fields[key].column;
 
                 accumulator.columns.push(column);
-                accumulator.values[column] = column === PLACE ? values[key].place : values[key];
+                switch (column) {
+                    case AIRPLANE_ID:
+                        accumulator.values[column] = values[key].id;
+                        break;
+                    case DEPARTURE_ID:
+                    case ARRIVAL_ID:
+                        accumulator.values[column] = values[key].cityId;
+                        break;
+                    default:
+                        accumulator.values[column] = values[key];
+                        break;
+                }
 
                 return accumulator;
             },
@@ -102,7 +129,7 @@ const PassengerDialog = ({ children, columns, data = {}, onChange = noop, ...pro
 
         (data.id === undefined ? insertData : updateData)({
             id: data.id ?? null,
-            table: PASSENGERS,
+            table: FLIGHT,
             ...combined,
         }).then(() => {
             setSubmitting(false);
@@ -116,7 +143,7 @@ const PassengerDialog = ({ children, columns, data = {}, onChange = noop, ...pro
         <>
             {children(openDialog)}
             <ThemedDialog open={open} onClose={closeDialog}>
-                <DialogTitle>{!existingPassenger ? 'Регистрация пассажира' : 'Изменение данных пассажира'}</DialogTitle>
+                <DialogTitle>{!existingPassenger ? 'Создание рейса' : 'Изменение данных рейса'}</DialogTitle>
                 <Formik initialValues={initialValues} validate={validate} onSubmit={handleSubmit}>
                     {({ values, touched, errors, handleChange, setFieldValue, handleSubmit }) => (
                         <>
@@ -140,6 +167,7 @@ const PassengerDialog = ({ children, columns, data = {}, onChange = noop, ...pro
                                         key={index}
                                     />
                                 ))}
+                                <pre>{JSON.stringify(values, null, 2)}</pre>
                             </DialogContent>
                             <DialogActions>
                                 <Button color="primary" onClick={closeDialog} disabled={submitting}>
@@ -151,7 +179,7 @@ const PassengerDialog = ({ children, columns, data = {}, onChange = noop, ...pro
                                     disabled={submitting}
                                     onClick={handleSubmit}
                                 >
-                                    {!existingPassenger ? 'Зарегистрировать' : 'Изменить'}
+                                    {!existingPassenger ? 'Создать' : 'Изменить'}
                                 </Button>
                             </DialogActions>
                         </>
@@ -171,7 +199,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const mapStateToProps = state => ({
-    columns: state.metaData.columns[PASSENGERS],
+    columns: state.metaData.columns[FLIGHT],
 });
 
-export default connect(mapStateToProps)(PassengerDialog);
+export default connect(mapStateToProps)(AirplaneDialog);

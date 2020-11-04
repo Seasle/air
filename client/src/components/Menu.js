@@ -4,6 +4,7 @@ import { useRouteMatch } from 'react-router-dom';
 import { Drawer, Toolbar, Button, makeStyles, withStyles } from '@material-ui/core';
 import RouteButton from './RouteButton';
 import { changeMenuType } from '../redux/actions/commonActions';
+import { TABLES, VIEWS } from '../constants';
 import { px } from '../utils';
 
 const ThemedDrawer = withStyles(theme => ({
@@ -46,12 +47,16 @@ const Menu = ({ children, ...props }) => {
                         <MenuButton color="primary" to="/" onClick={handleClose}>
                             Главная
                         </MenuButton>
-                        <MenuButton color="primary" to="/tables" onClick={handleClose}>
-                            Таблицы
-                        </MenuButton>
-                        <MenuButton color="primary" to="/views" onClick={handleClose}>
-                            Представления
-                        </MenuButton>
+                        {props.hasAnyTable && (
+                            <MenuButton color="primary" to="/tables" onClick={handleClose}>
+                                Таблицы
+                            </MenuButton>
+                        )}
+                        {props.hasAnyView && (
+                            <MenuButton color="primary" to="/views" onClick={handleClose}>
+                                Представления
+                            </MenuButton>
+                        )}
                     </div>
                     <Button color="primary" variant="outlined" onClick={toggleMenu}>
                         {props.menuType === 'temporary' ? 'Закрепить' : 'Открепить'}
@@ -80,6 +85,8 @@ const useStyles = makeStyles(theme => ({
 
 const mapStateToProps = state => ({
     menuType: state.common.menuType,
+    hasAnyTable: state.metaData.allowed.some(entry => TABLES.has(entry.tableName)),
+    hasAnyView: state.metaData.allowed.some(entry => VIEWS.has(entry.tableName)),
 });
 
 const mapStateToDispatch = dispatch => ({

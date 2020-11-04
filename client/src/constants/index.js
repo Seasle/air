@@ -16,6 +16,13 @@ export const DOCUMENT_NUMBER = 'DOCUMENT_NUMBER';
 export const DOCUMENT_SERIES = 'DOCUMENT_SERIES';
 export const FLIGHT_NUMBER = 'FLIGHT_NUMBER';
 export const DEPARTURE_DATE = 'DEPARTURE_DATE';
+export const DEPARTURE_TIME = 'DEPARTURE_TIME';
+export const AIRPLANE_ID = 'AIRPLANE_ID';
+export const DEPARTURE_ID = 'DEPARTURE_ID';
+export const ARRIVAL_ID = 'ARRIVAL_ID';
+export const FLIGHT_TIME = 'FLIGHT_TIME';
+export const TICKET_PRICE = 'TICKET_PRICE';
+export const COUNTRY_ID = 'COUNTRY_ID';
 
 export const TABLES = new Map([
     [CITY, 'Города'],
@@ -39,7 +46,15 @@ export const FIELDS = new Map([
     [DOCUMENT_SERIES, 'Серия документа'],
     [FLIGHT_NUMBER, 'Номер рейса'],
     [DEPARTURE_DATE, 'Дата вылета'],
+    [DEPARTURE_TIME, 'Время вылета'],
     [PLACE, 'Место'],
+    [AIRPLANE_ID, 'Самолет'],
+    [DEPARTURE_ID, 'Пункт вылета'],
+    [ARRIVAL_ID, 'Пункт назначения'],
+    [FLIGHT_TIME, 'Время полета'],
+    [TICKET_PRICE, 'Цена билета'],
+    [COUNTRY_ID, 'Страна'],
+    [NAME, 'Название'],
 ]);
 
 export const ENTRIES = mergeMaps(TABLES, VIEWS);

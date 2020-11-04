@@ -159,7 +159,7 @@ const Entry = props => {
                                                 </TableSortLabel>
                                             </ThemedTableCell>
                                         ))}
-                                        {canUpdateOrDelete && <ThemedTableCell></ThemedTableCell>}
+                                        {canUpdateOrDelete && <ThemedTableCell align="right"></ThemedTableCell>}
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -171,7 +171,7 @@ const Entry = props => {
                                                 </ThemedTableCell>
                                             ))}
                                             {canUpdateOrDelete && (
-                                                <ThemedTableCell>
+                                                <ThemedTableCell align="right">
                                                     {permissions?.update && (
                                                         <EditDialog
                                                             current={params.name}

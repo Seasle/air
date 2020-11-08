@@ -9,3 +9,5 @@ export const insertData = (params, options) => post(`${base}/insert`, params, op
 export const updateData = (params, options) => post(`${base}/update`, params, options);
 
 export const deleteData = (params, options) => post(`${base}/delete`, params, options);
+
+export const execute = (params, options) => post(`${base}/execute`, params, options);

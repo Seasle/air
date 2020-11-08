@@ -6,7 +6,7 @@ import ThemedDialog from '../common/ThemedDialog';
 import Field from '../common/Field';
 import { FLIGHT, FLIGHT_NUMBER, AIRPLANE_ID, DEPARTURE_ID, ARRIVAL_ID, FIELDS } from '../../constants';
 import { snakeToCamel, noop, px } from '../../utils';
-import { insertData, updateData, getAvailableFlights, getAvailableAirplanes, getAvailableCities } from '../../api';
+import { execute, getAvailableFlights, getAvailableAirplanes, getAvailableCities } from '../../api';
 
 const settings = {
     [FLIGHT_NUMBER]: () => ({
@@ -127,9 +127,8 @@ const AirplaneDialog = ({ children, columns, data = {}, onChange = noop, ...prop
 
         setSubmitting(true);
 
-        (data.id === undefined ? insertData : updateData)({
-            id: data.id ?? null,
-            table: FLIGHT,
+        execute({
+            procedure: 'INSERT_FLIGHT',
             ...combined,
         }).then(() => {
             setSubmitting(false);

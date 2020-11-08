@@ -66,5 +66,16 @@ export default (fastify, options, done) => {
         reply.send(data);
     });
 
+    fastify.post('/execute', async (request, reply) => {
+        const { procedure, columns, values } = request.body;
+        const keys = columns.map(column => `:${column}`);
+        const orderedValues = columns.map(column => prepareValue(values[column]));
+        const data = await execute(`CALL SYS.${procedure}(${keys.join(', ')})`, orderedValues, {
+            autoCommit: true,
+        });
+
+        reply.send(data);
+    });
+
     done();
 };

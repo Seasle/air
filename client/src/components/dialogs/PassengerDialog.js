@@ -4,7 +4,7 @@ import { DialogTitle, DialogContent, DialogActions, Button, makeStyles } from '@
 import { Formik } from 'formik';
 import ThemedDialog from '../common/ThemedDialog';
 import Field from '../common/Field';
-import { PASSENGERS, FLIGHT_NUMBER, FIELDS, PLACE } from '../../constants';
+import { PASSENGERS, FLIGHT_NUMBER, DEPARTURE_DATE, FIELDS, PLACE } from '../../constants';
 import { snakeToCamel, noop, px } from '../../utils';
 import { insertData, updateData, getAvailableFlights, getAvailablePlaces } from '../../api';
 
@@ -18,12 +18,16 @@ const settings = {
         },
     }),
     [PLACE]: ({ values = {} }) => {
-        const value = values[snakeToCamel(FLIGHT_NUMBER)];
+        const flight = values[snakeToCamel(FLIGHT_NUMBER)];
+        const pickedDate = values[snakeToCamel(DEPARTURE_DATE)] || new Date();
+        const date = new Date(pickedDate.getFullYear(), pickedDate.getMonth(), pickedDate.getDate());
 
         return {
             async: true,
             endpoint: (start = '') =>
-                getAvailablePlaces(new URLSearchParams({ flight: value, start: start.toUpperCase() })),
+                getAvailablePlaces(
+                    new URLSearchParams({ flight, date: date.toISOString(), start: start.toUpperCase() })
+                ),
             toOption: value => ({ place: value }),
             props: {
                 renderOption: option => (
@@ -33,7 +37,7 @@ const settings = {
                     </>
                 ),
                 getOptionLabel: option => option.place,
-                disabled: values === null || value === '',
+                disabled: values === null || flight === '',
             },
         };
     },

@@ -1,3 +1,5 @@
+import { ISO_DATE } from '../constants/expressions.js';
+
 export const normalize = value => {
     switch (value) {
         case 'Y':
@@ -9,6 +11,14 @@ export const normalize = value => {
             return false;
         default:
             return value;
+    }
+};
+
+export const prepareValue = value => {
+    if (ISO_DATE.test(value)) {
+        return new Date(Date.parse(value));
+    } else {
+        return value;
     }
 };
 

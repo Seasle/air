@@ -1,14 +1,6 @@
 import { select, execute } from '../db.js';
+import { prepareValue } from '../utils/mapper.js';
 import { getColumns } from '../utils/getColumns.js';
-import { ISO_DATE } from '../constants/expressions.js';
-
-const prepareValue = value => {
-    if (ISO_DATE.test(value)) {
-        return new Date(Date.parse(value));
-    } else {
-        return value;
-    }
-};
 
 export default (fastify, options, done) => {
     fastify.post('/', async (request, reply) => {

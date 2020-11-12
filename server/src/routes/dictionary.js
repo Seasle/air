@@ -1,4 +1,5 @@
 import { select } from '../db.js';
+import { prepareValue } from '../utils/mapper.js';
 
 export default (fastify, options, done) => {
     fastify.get('/flights', async (request, reply) => {
@@ -34,13 +35,20 @@ export default (fastify, options, done) => {
                     SYS.AIRPLANE_PLACES.PLACE NOT IN (
                         SELECT PLACE
                         FROM SYS.PASSENGERS
-                        WHERE SYS.PASSENGERS.FLIGHT_NUMBER = :FLIGHT_NUMBER
+                        WHERE
+                            SYS.PASSENGERS.DEPARTURE_DATE >= :DEPARTURE_DATE AND
+                            SYS.PASSENGERS.FLIGHT_NUMBER = :FLIGHT_NUMBER
                     ) AND
                     SYS.AIRPLANE_PLACES.PLACE LIKE '%'||:STARTS||'%'
                 ORDER BY TO_NUMBER(REGEXP_SUBSTR(SYS.AIRPLANE_PLACES.PLACE, '\\d+')), REGEXP_SUBSTR(SYS.AIRPLANE_PLACES.PLACE, '^\\D*')
             )
             WHERE ROWNUM <= 50`,
-            [request.query.flight || '', request.query.flight || '', request.query.start || '']
+            [
+                request.query.flight || '',
+                prepareValue(request.query.date || new Date()),
+                request.query.flight || '',
+                request.query.start || '',
+            ]
         );
 
         reply.send(data);

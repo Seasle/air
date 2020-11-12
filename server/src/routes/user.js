@@ -27,7 +27,7 @@ export default (fastify, options, done) => {
                 reply.session(defaultUser);
             }
         } else {
-            reply.send(request.session.cart || defaultUser);
+            reply.send(request.session.user || defaultUser);
         }
     });
 

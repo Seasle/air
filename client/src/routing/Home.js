@@ -2,13 +2,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Switch, Route } from 'react-router-dom';
 import clsx from 'clsx';
-import { Typography, makeStyles } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import Header from '../components/Header';
 import Menu from '../components/Menu';
+import Dashboard from './Dashboard';
 import Tables from './Tables';
 import Views from './Views';
 import Entry from './Entry';
-
 import { px } from '../utils';
 
 const Home = props => {
@@ -19,11 +19,7 @@ const Home = props => {
             <Menu>{openMenu => <Header isToolbarPinned={props.isToolbarPinned} openMenu={openMenu} />}</Menu>
             <div className={classes.container}>
                 <Switch>
-                    <Route exact path="/">
-                        <Typography variant="h3" align="center">
-                            Hello World
-                        </Typography>
-                    </Route>
+                    <Route exact path="/" component={Dashboard} />
                     <Route path="/tables" component={Tables} />
                     <Route path="/views" component={Views} />
                     <Route path="/entry/:name" component={Entry} />
